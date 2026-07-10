@@ -1,0 +1,15 @@
+include CHANGELOG.md
+include CITATION.cff
+include CODE_OF_CONDUCT.md
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+include SECURITY.md
+recursive-include docs *.css *.py *.rst
+recursive-include examples *.py
+recursive-include requirements *.txt
+recursive-include scripts *.py
+recursive-include tests *.json *.py
+prune docs/_build
+prune examples/generated_figures
+prune examples/generated_reports

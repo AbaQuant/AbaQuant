@@ -1,0 +1,180 @@
+/* Light mode only: custom code + link colors */
+body[data-theme="light"] {
+    --custom-code-bg: #f7faff;
+    --custom-inline-code-bg: #eef4ff;
+    --custom-inline-code-text: #5a7eba;
+    --custom-link-color: #4a63af;
+    /* Left sidebar */
+    --color-sidebar-background: #fafcff;
+    --color-sidebar-background-border: #fafcff;
+    --color-sidebar-caption-text: #4a63af;
+    --color-sidebar-link-text: #1f2937;
+    --color-sidebar-link-text--top-level: #4a63af;
+    --color-sidebar-item-background--hover: #d8e3f6;
+    --color-sidebar-item-background--current: #c7d7f0;
+    /* Search bar */
+    --color-sidebar-search-background: #f3f6ff;
+    --color-sidebar-search-background--focus: #ffffff;
+    --color-sidebar-search-border: #5a7eba;
+    --color-sidebar-search-border--focus: #4a63af;
+    --color-sidebar-search-foreground: #4a63af;
+    --color-sidebar-search-foreground--focus: #4a63af;
+    --color-sidebar-search-icon: #4a63af;
+
+        --custom-dark-blue-text: #284167;
+
+    /* Main Furo text variables */
+    --color-foreground-primary: #18345d;
+    --color-foreground-secondary: #27466f;
+    --color-foreground-muted: #4a63af;
+}
+
+/* Code blocks */
+body[data-theme="light"] .highlight,
+body[data-theme="light"] .highlight pre,
+body[data-theme="light"] div.highlight {
+    background-color: var(--custom-code-bg) !important;
+}
+
+/* Inline code */
+body[data-theme="light"] code.literal,
+body[data-theme="light"] code.docutils.literal {
+    background-color: var(--custom-inline-code-bg);
+    color: var(--custom-inline-code-text);
+}
+
+/* Links on white/light background */
+body[data-theme="light"] a {
+    color: var(--custom-link-color);
+}
+
+body[data-theme="light"] a:hover {
+    color: #5a7eba;
+}
+
+/* Light mode only: sidebar search bar */
+body[data-theme="light"] .sidebar-search-container input {
+    background-color: var(--color-sidebar-search-background) !important;
+    color: var(--color-sidebar-search-foreground) !important;
+    border: 1px solid var(--color-sidebar-search-border) !important;
+    border-radius: 0.45rem;
+    padding-left: 2.25rem !important; /* keeps room for the lupa */
+}
+
+/* Placeholder */
+body[data-theme="light"] .sidebar-search-container input::placeholder {
+    color: #5a7eba !important;
+    opacity: 1;
+}
+
+/* Focus */
+body[data-theme="light"] .sidebar-search-container input:focus {
+    background-color: var(--color-sidebar-search-background--focus) !important;
+    color: var(--color-sidebar-search-foreground--focus) !important;
+    border-color: var(--color-sidebar-search-border--focus) !important;
+    outline: 2px solid #aec2e6 !important;
+    outline-offset: 1px;
+}
+
+/* Restore/search icon color */
+body[data-theme="light"] .sidebar-search-container::before,
+body[data-theme="light"] .sidebar-search-container .search-icon {
+    color: #4a63af !important;
+    background-color: #4a63af !important;
+}
+
+/* Light mode only: function names inside highlighted code blocks */
+body[data-theme="light"] .highlight .nf,
+body[data-theme="light"] .highlight .fm {
+    color: #4a63af !important;
+    font-weight: 600;
+}
+
+/* Light mode only: function/class names in autodoc API signatures */
+body[data-theme="light"] .sig-name,
+body[data-theme="light"] .descname,
+body[data-theme="light"] .py .sig-name,
+body[data-theme="light"] dt.sig .sig-name {
+    color: #4a63af !important;
+    font-weight: 600;
+}
+
+/* Light mode only: remove red from module prefixes in API signatures */
+body[data-theme="light"] dt.sig .sig-prename,
+body[data-theme="light"] dt.sig .descclassname,
+body[data-theme="light"] dt.sig .sig-prename .pre,
+body[data-theme="light"] dt.sig .descclassname .pre {
+    color: #8095d7 !important;
+    font-weight: 600;
+}
+
+/* Light mode only: general page text */
+body[data-theme="light"] {
+    color: var(--custom-dark-blue-text);
+}
+
+/* Main content text */
+body[data-theme="light"] .content,
+body[data-theme="light"] .content p,
+body[data-theme="light"] .content li,
+body[data-theme="light"] .content dd,
+body[data-theme="light"] .content dt {
+    color: var(--custom-dark-blue-text);
+}
+
+/* Headings */
+body[data-theme="light"] h1,
+body[data-theme="light"] h2,
+body[data-theme="light"] h3,
+body[data-theme="light"] h4,
+body[data-theme="light"] h5,
+body[data-theme="light"] h6 {
+    color: var(--custom-dark-blue-text);
+}
+
+/* Sidebar normal text */
+body[data-theme="light"] .sidebar-drawer,
+body[data-theme="light"] .sidebar-drawer a,
+body[data-theme="light"] .sidebar-tree,
+body[data-theme="light"] .sidebar-tree li,
+body[data-theme="light"] .sidebar-tree a {
+    color: var(--custom-dark-blue-text);
+}
+
+/* API signatures: replace black parameter text */
+body[data-theme="light"] dt.sig,
+body[data-theme="light"] dt.sig .pre,
+body[data-theme="light"] dt.sig .sig-param,
+body[data-theme="light"] dt.sig .sig-param .pre {
+    color: var(--custom-dark-blue-text) !important;
+}
+
+/* 
+----------------- dark ---------------------- */
+/* Explicit dark mode */
+body[data-theme="dark"] dt.sig .sig-prename,
+body[data-theme="dark"] dt.sig .descclassname,
+body[data-theme="dark"] dt.sig .sig-prename .pre,
+body[data-theme="dark"] dt.sig .descclassname .pre,
+body[data-theme="dark"] dt.sig .sig-name,
+body[data-theme="dark"] dt.sig .descname,
+body[data-theme="dark"] dt.sig .sig-name .pre,
+body[data-theme="dark"] dt.sig .descname .pre {
+    color: #aec2e6 !important;
+    font-weight: 600;
+}
+
+/* Any dark-looking auto mode */
+@media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) dt.sig .sig-prename,
+    body:not([data-theme="light"]) dt.sig .descclassname,
+    body:not([data-theme="light"]) dt.sig .sig-prename .pre,
+    body:not([data-theme="light"]) dt.sig .descclassname .pre,
+    body:not([data-theme="light"]) dt.sig .sig-name,
+    body:not([data-theme="light"]) dt.sig .descname,
+    body:not([data-theme="light"]) dt.sig .sig-name .pre,
+    body:not([data-theme="light"]) dt.sig .descname .pre {
+        color: #aec2e6 !important;
+        font-weight: 600;
+    }
+}

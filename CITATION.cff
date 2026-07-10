@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use AbaQuant, please cite the software using this metadata."
+title: "AbaQuant"
+type: software
+version: "1.0.0rc1"
+abstract: "AbaQuant is an applied actuarial and quantitative-finance library for Python."
+url: "https://github.com/AbaQuant/AbaQuant"
+repository-code: "https://github.com/AbaQuant/AbaQuant"
+license: "MIT"
+
+authors:
+  - family-names: "Espino-Montelongo"
+    given-names: "Heriberto"
+    affiliation: "Universidad de las Américas Puebla, Mexico"
+    orcid: "0009-0009-1230-2931"
+
+  - family-names: "Paredes-Conde"
+    given-names: "Owen"
+    affiliation: "Universidad de las Américas Puebla, Mexico"
+    orcid: "0009-0009-0137-4614"
+
+keywords:
+  - "actuarial science"
+  - "quantitative finance"
+  - "financial mathematics"
+  - "portfolio optimization"
+  - "actuarial modeling"
+  - "risk management"

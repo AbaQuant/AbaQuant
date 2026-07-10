@@ -1,0 +1,109 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "abaquant"
+version = "1.0.0rc1"
+description = "Applied actuarial and quantitative finance workflows for Python."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Heriberto Espino-Montelongo" },
+    { name = "Owen Paredes-Conde" },
+]
+keywords = [
+    "actuarial science",
+    "credit risk",
+    "derivatives",
+    "financial mathematics",
+    "portfolio optimization",
+    "quantitative finance",
+    "risk management",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+dependencies = [
+    "numpy>=1.23.5",
+    "pandas>=1.5.3",
+    "scipy>=1.10.1",
+]
+
+[project.urls]
+Documentation = "https://abaquant.github.io/AbaQuant/"
+Issues = "https://github.com/AbaQuant/AbaQuant/issues"
+Repository = "https://github.com/AbaQuant/AbaQuant"
+
+[project.optional-dependencies]
+market = [
+    "yfinance",
+]
+visual = [
+    "matplotlib",
+    "plotly",
+]
+dev = [
+    "build>=1.2",
+    "pytest",
+    "ruff>=0.11",
+    "twine>=5.1",
+]
+docs = [
+    "sphinx",
+    "furo",
+    "sphinx-copybutton",
+    "sphinx-autobuild",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["abaquant", "abaquant.*"]
+
+[tool.setuptools.package-data]
+abaquant = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["src", "tests", "examples", "scripts"]
+exclude = [
+    "docs/_build",
+    "docs_build",
+    "notebooks",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = [
+    "E501",  # Ruff's formatter owns line wrapping; long strings may remain.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"examples/**/*.py" = ["E402"]
+"src/abaquant/marketdata/__init__.py" = ["F403", "F405"]
+"src/abaquant/portfolio/__init__.py" = ["F403", "F405"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

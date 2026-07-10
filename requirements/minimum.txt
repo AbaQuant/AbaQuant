@@ -1,0 +1,4 @@
+# Candidate dependency floors enforced by the Python 3.11 CI job before release.
+numpy==1.23.5
+pandas==1.5.3
+scipy==1.10.1

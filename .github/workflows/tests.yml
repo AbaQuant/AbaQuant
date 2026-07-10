@@ -1,0 +1,104 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  supported-python:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Reject legacy repository URLs
+        shell: bash
+        run: |
+          if git grep -n -E 'github\.com/heri-espino/AbaQuant|raw\.githubusercontent\.com/heri-espino/AbaQuant'; then
+            echo "Legacy repository URL found. Use https://github.com/AbaQuant/AbaQuant."
+            exit 1
+          fi
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package and release dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,docs,market,visual]"
+
+      - name: Ruff format check
+        run: python -m ruff format --check .
+
+      - name: Ruff lint check
+        run: python -m ruff check .
+
+      - name: Run pytest
+        run: python -m pytest
+
+      - name: Check documentation coverage
+        run: python scripts/check_documentation.py
+
+      - name: Build Sphinx documentation
+        run: python -m sphinx -W --keep-going -b html docs docs/_build/html
+
+      - name: Build wheel and source distribution
+        run: python -m build
+
+      - name: Check distribution metadata
+        run: python -m twine check dist/*
+
+      - name: Upload Python 3.14 distributions
+        if: matrix.python-version == '3.14'
+        uses: actions/upload-artifact@v4
+        with:
+          name: abaquant-distributions
+          path: dist/*
+          if-no-files-found: error
+
+  minimum-dependencies:
+    name: Python 3.11 minimum dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install constrained minimum dependency set
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements/minimum.txt -e ".[dev,docs,market,visual]"
+
+      - name: Report resolved dependencies
+        run: python -m pip freeze
+
+      - name: Run deterministic tests at dependency floors
+        run: python -m pytest
+
+      - name: Check docs at dependency floors
+        run: |
+          python scripts/check_documentation.py
+          python -m sphinx -W --keep-going -b html docs docs/_build/html
