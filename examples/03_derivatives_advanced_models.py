@@ -4,53 +4,30 @@ from __future__ import annotations
 
 import numpy as np
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     print_section,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives.analytics import distributions, parity, volatility
-from abaquant.derivatives.models import (
-    BlackScholesMertonModel,
-    CoxRossRubinsteinModel,
-    HestonStochasticVolatilityModel,
-    MertonJumpDiffusionModel,
-    NormalBachelierModel,
-    NormalInverseGaussianModel,
-    SABRVolatilityModel,
-    VarianceGammaProcessModel,
-)
-from abaquant.derivatives.models.binomial import crr_tree_parameters
-from abaquant.derivatives.models.black_scholes import bsm_d1_d2_summary
-from abaquant.derivatives.models.merton import merton_jump_statistics
-from abaquant.derivatives.monte_carlo import monte_carlo_bsm
-from abaquant.derivatives.numerics.implied_volatility import (
-    implied_volatility_black_scholes,
-)
-from abaquant.derivatives.simulation.gbm import simulate_gbm_paths
-from abaquant.derivatives.simulation.levy import simulate_vg_nig_returns
-from abaquant.derivatives.simulation.merton import simulate_merton_paths
-from abaquant.visualization import VisualizationError
 
 
 def build_pricing_models() -> dict[str, object]:
     """Create one deterministic instance of each advanced pricing model."""
     return {
-        "black_scholes": BlackScholesMertonModel(100.0, 100.0, 1.0, 0.05, 0.20),
-        "crr": CoxRossRubinsteinModel(100.0, 100.0, 1.0, 0.05, 0.20, number_of_steps=50),
-        "bachelier": NormalBachelierModel(100.0, 100.0, 1.0, 0.05, 20.0),
-        "heston": HestonStochasticVolatilityModel(
+        "black_scholes": aq.BlackScholesMertonModel(100.0, 100.0, 1.0, 0.05, 0.20),
+        "crr": aq.CoxRossRubinsteinModel(100.0, 100.0, 1.0, 0.05, 0.20, number_of_steps=50),
+        "bachelier": aq.NormalBachelierModel(100.0, 100.0, 1.0, 0.05, 20.0),
+        "heston": aq.HestonStochasticVolatilityModel(
             100.0, 100.0, 1.0, 0.05, 0.0, 0.04, 2.0, 0.04, 0.3, -0.5
         ),
-        "merton": MertonJumpDiffusionModel(100.0, 100.0, 1.0, 0.05, 0.20, poisson_series_terms=8),
-        "nig": NormalInverseGaussianModel(100.0, 100.0, 1.0, 0.05, 5.0, 0.0, 0.2),
-        "sabr": SABRVolatilityModel(100.0, 100.0, 1.0, 0.20, 0.5, -0.3, 0.4),
-        "variance_gamma": VarianceGammaProcessModel(100.0, 100.0, 1.0, 0.05, 0.20, -0.1, 0.2),
+        "merton": aq.MertonJumpDiffusionModel(
+            100.0, 100.0, 1.0, 0.05, 0.20, poisson_series_terms=8
+        ),
+        "nig": aq.NormalInverseGaussianModel(100.0, 100.0, 1.0, 0.05, 5.0, 0.0, 0.2),
+        "sabr": aq.SABRVolatilityModel(100.0, 100.0, 1.0, 0.20, 0.5, -0.3, 0.4),
+        "variance_gamma": aq.VarianceGammaProcessModel(100.0, 100.0, 1.0, 0.05, 0.20, -0.1, 0.2),
     }
 
 
@@ -73,30 +50,36 @@ def run_model_diagnostics(models: dict[str, object]) -> dict[str, object]:
     bsm_price = models["black_scholes"].call_price()
     prices = np.array([100.0, 101.0, 99.0, 102.0, 103.0])
     return {
-        "bsm_d1_d2": bsm_d1_d2_summary(100.0, 100.0, 1.0, 0.05, 0.20),
+        "bsm_d1_d2": aq.bsm_d1_d2_summary(100.0, 100.0, 1.0, 0.05, 0.20),
         "bsm_call_diagnostics": models["black_scholes"].diagnostics("call").as_dict(),
         "bsm_put_diagnostics": models["black_scholes"].diagnostics("put").as_dict(),
-        "crr_tree_parameters": crr_tree_parameters(1.0, 0.05, 0.20, N=50),
-        "merton_jump_statistics": merton_jump_statistics(1.0, -0.05, 0.20, 0.20),
-        "distribution_moments": distributions.distribution_moments(prices),
-        "parity_check": parity.parity_check(10.0, 7.0, 100.0, 100.0, 1.0, 0.05),
-        "realized_volatility_last": float(volatility.realized_vol(prices, window=2)[-1]),
-        "solved_bsm_iv": implied_volatility_black_scholes(bsm_price, 100.0, 100.0, 1.0, 0.05),
+        "crr_tree_parameters": aq.crr_tree_parameters(1.0, 0.05, 0.20, N=50),
+        "merton_jump_statistics": aq.merton_jump_statistics(1.0, -0.05, 0.20, 0.20),
+        "distribution_moments": aq.derivatives.analytics.distributions.distribution_moments(prices),
+        "parity_check": aq.derivatives.analytics.parity.parity_check(
+            10.0, 7.0, 100.0, 100.0, 1.0, 0.05
+        ),
+        "realized_volatility_last": float(
+            aq.derivatives.analytics.volatility.realized_vol(prices, window=2)[-1]
+        ),
+        "solved_bsm_iv": aq.derivatives.numerics.implied_volatility.implied_volatility_black_scholes(
+            bsm_price, 100.0, 100.0, 1.0, 0.05
+        ),
     }
 
 
 def run_simulations() -> dict[str, object]:
     """Run compact Monte Carlo and path-simulation examples."""
     return {
-        "monte_carlo_bsm": monte_carlo_bsm(100.0, 100.0, 1.0, 0.05, 0.20, n_paths=2_000),
-        "gbm_shape": simulate_gbm_paths(100.0, 1.0, 0.05, 0.20, n_paths=8, n_steps=20)[
+        "monte_carlo_bsm": aq.monte_carlo_bsm(100.0, 100.0, 1.0, 0.05, 0.20, n_paths=2_000),
+        "gbm_shape": aq.simulate_gbm_paths(100.0, 1.0, 0.05, 0.20, n_paths=8, n_steps=20)[
             "paths"
         ].shape,
-        "merton_shape": simulate_merton_paths(100.0, 1.0, 0.05, 0.20, n_paths=8, n_steps=20)[
+        "merton_shape": aq.simulate_merton_paths(100.0, 1.0, 0.05, 0.20, n_paths=8, n_steps=20)[
             "paths"
         ].shape,
         "levy_keys": sorted(
-            simulate_vg_nig_returns(1.0, 0.20, -0.1, 0.2, 5.0, 0.0, 0.2, 0.2, n_sim=500).keys()
+            aq.simulate_vg_nig_returns(1.0, 0.20, -0.1, 0.2, 5.0, 0.0, 0.2, 0.2, n_sim=500).keys()
         ),
     }
 
@@ -141,7 +124,7 @@ def create_model_visualizations(models: dict[str, object]) -> dict[str, str]:
             volatility_grid_size=15,
             filename="bsm_call_extrinsic_surface",
         ),
-        "crr_lattice": CoxRossRubinsteinModel(
+        "crr_lattice": aq.CoxRossRubinsteinModel(
             100.0, 100.0, 1.0, 0.05, 0.20, number_of_steps=6
         ).visualize(chart="tree", option_type="put", filename="crr_put_lattice"),
         "sabr_smile": models["sabr"].visualize(chart="volatility_smile", filename="sabr_smile"),
@@ -164,7 +147,7 @@ def run() -> None:
         print(f"{key}: {value}")
     try:
         print_mapping("Created advanced-derivative figures", create_model_visualizations(models))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

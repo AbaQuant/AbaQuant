@@ -10,6 +10,21 @@ scripts. Each file follows the same pattern:
 
 No deterministic example requires Yahoo, yfinance, or network access.
 
+## Install AbaQuant
+
+The examples consume the published package through its public facade:
+
+```python
+import abaquant as aq
+```
+
+Install the package and the optional dependencies used by the complete example
+suite from PyPI:
+
+```bash
+python -m pip install "abaquant[market,visual]"
+```
+
 ## Run everything deterministic
 
 ```bash
@@ -77,7 +92,9 @@ fundamentals.
 ## Visualization examples
 
 The examples save figures instead of calling `show()` automatically. This makes
-them suitable for scripts, notebooks, and CI-style smoke tests.
+them suitable for scripts, notebooks, and CI-style smoke tests. Matplotlib
+figures are committed as SVG files; dense surfaces and heatmaps are rasterized
+inside the SVG so labels and axes remain vector sharp without oversized files.
 
 Generated files are saved under:
 
@@ -86,15 +103,17 @@ examples/generated_figures/
 ```
 
 Most visualization examples use Matplotlib by default. Run all visual examples with `python examples/run_all_visual_examples.py`. `10_visualization_theme.py`
-also demonstrates temporary Plotly themes and HTML export. The option visual
+also demonstrates temporary Plotly themes and HTML export. The Plotly HTML
+artifact remains generated but is not committed. The option visual
 examples include intrinsic/extrinsic decomposition, standardized Greek curves,
 price, delta, gamma, vega, and extrinsic-value surfaces, option-chain IV smile/surface/term-structure/rich-cheap/open-interest charts, plus derivative,
 portfolio, credit scenario-analysis visual reports, and integrated risk-dashboard charts, and derivative calibration model-versus-market/residual diagnostics.
 
-## Local source snapshots
+## Package imports
 
-The helper `examples/_shared/package_bootstrap.py` lets examples run either from
-an installed package or from a flat unpacked source snapshot.
+The examples intentionally do not modify `sys.path` or import from `src`.
+Run them in an environment where AbaQuant is installed, whether from PyPI or as
+an editable development installation.
 
 ## Scope warning
 

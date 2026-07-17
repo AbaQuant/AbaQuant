@@ -4,32 +4,16 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import abaquant as aq
 from _shared.output import EXAMPLE_ROOT, print_mapping
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_credit_input_values, sample_returns
-
-ensure_package_importable()
-
-from abaquant import RiskDashboard
-from abaquant.credit import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    CreditHistoricalSeries,
-    IncomeStatementInputs,
-    MarketEquityObservation,
-    PriorPeriodInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.derivatives.models import BlackScholesMertonModel
-from abaquant.portfolio import PortfolioAllocator
 
 REPORT_DIR = EXAMPLE_ROOT / "generated_reports"
 
 
-def build_option_model() -> BlackScholesMertonModel:
+def build_option_model() -> aq.BlackScholesMertonModel:
     """Create a deterministic Black--Scholes--Merton option model."""
-    return BlackScholesMertonModel(
+    return aq.BlackScholesMertonModel(
         spot_price=100.0,
         strike_price=105.0,
         maturity_years=1.0,
@@ -42,8 +26,8 @@ def build_option_model() -> BlackScholesMertonModel:
 def build_credit_assessment():
     """Create one deterministic credit-proxy assessment."""
     values = sample_credit_input_values()
-    inputs = CreditAnalysisInputs(
-        balance_sheet=BalanceSheetInputs(
+    inputs = aq.CreditAnalysisInputs(
+        balance_sheet=aq.BalanceSheetInputs(
             total_debt=values["total_debt"],
             total_equity=values["total_equity"],
             current_assets=values["current_assets"],
@@ -55,7 +39,7 @@ def build_credit_assessment():
             retained_earnings=values["retained_earnings"],
             long_term_debt=values["long_term_debt"],
         ),
-        income_statement=IncomeStatementInputs(
+        income_statement=aq.IncomeStatementInputs(
             revenue=values["revenue"],
             gross_profit=values["gross_profit"],
             ebit=values["ebit"],
@@ -63,8 +47,8 @@ def build_credit_assessment():
             interest_expense=values["interest_expense"],
             net_income=values["net_income"],
         ),
-        cash_flow_statement=CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
-        prior_period=PriorPeriodInputs(
+        cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
+        prior_period=aq.PriorPeriodInputs(
             total_assets=values["previous_total_assets"],
             net_income=values["previous_net_income"],
             long_term_debt=values["previous_long_term_debt"],
@@ -74,20 +58,20 @@ def build_credit_assessment():
             gross_profit=values["previous_gross_profit"],
             revenue=values["previous_revenue"],
         ),
-        market_equity=MarketEquityObservation(market_value_equity=650.0),
-        historical_series=CreditHistoricalSeries(
+        market_equity=aq.MarketEquityObservation(market_value_equity=650.0),
+        historical_series=aq.CreditHistoricalSeries(
             earnings_history=(42.0, 47.0, 53.0, 60.0),
             leverage_history=(0.60, 0.54, 0.48, 0.42),
         ),
         reporting_currency="USD",
         reporting_period="FY2025",
     )
-    return calculate_credit_proxy_metrics(inputs)
+    return aq.calculate_credit_proxy_metrics(inputs)
 
 
-def build_portfolio_allocator() -> PortfolioAllocator:
+def build_portfolio_allocator() -> aq.PortfolioAllocator:
     """Create a deterministic portfolio allocator for report examples."""
-    return PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    return aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
 
 
 def export_reports(output_directory: Path = REPORT_DIR) -> dict[str, str]:
@@ -104,7 +88,7 @@ def export_reports(output_directory: Path = REPORT_DIR) -> dict[str, str]:
         benchmark="equal_weight",
         lookback=10,
     )
-    dashboard = RiskDashboard(
+    dashboard = aq.RiskDashboard(
         allocator,
         credit_assessments={"ALPHA": credit_assessment},
         weights=backtest.weights_history.iloc[-1],

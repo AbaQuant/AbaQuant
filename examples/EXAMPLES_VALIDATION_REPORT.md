@@ -11,23 +11,23 @@ modules with small functions and explicit `run()` entry points.
 - The core deterministic runner executes in one Python process.
 - The visualization runner executes in one Python process.
 - Generated Matplotlib figures are closed between scripts to avoid resource warnings.
-- Examples can run from the flat source snapshot using `_shared/package_bootstrap.py`.
+- Matplotlib figures export as SVG, with dense surface and heatmap artists rasterized.
+- Every example accesses the installed library through `import abaquant as aq`.
+- No example modifies `sys.path` or injects the repository's `src` directory.
 
 ## Commands run
 
 ```bash
-python -m compileall -q .
-python tools/check_documentation.py
-PYTHONPATH=/mnt/data/test_alias python -m pytest -q tests
+python -m compileall -q examples
+python -m pytest
 python examples/run_all_deterministic_examples.py
 python examples/run_all_visual_examples.py
 ```
 
 ## Results
 
-- Source compilation: passed.
-- Documentation audit: passed.
-- Tests: `11 passed` using a temporary `abaquant` package alias for the flat archive layout.
+- Example compilation: passed.
+- Test suite: passed.
 - Core deterministic examples: passed.
 - Visualization examples: passed.
 

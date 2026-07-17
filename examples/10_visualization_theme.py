@@ -4,26 +4,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import abaquant as aq
 from _shared.output import FIGURE_DIR, print_mapping
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives.models import BlackScholesMertonModel
-from abaquant.visualization import (
-    VisualizationError,
-    VisualizationTheme,
-    configure_visualization,
-    get_visualization_theme,
-    reset_visualization_theme,
-    visualization_theme,
-)
 
 
 def configure_blue_theme(output_directory: Path) -> object:
     """Apply a reusable Matplotlib theme for all later visualizations."""
-    return configure_visualization(
-        VisualizationTheme(
+    return aq.configure_visualization(
+        aq.VisualizationTheme(
             backend="matplotlib",
             color_sequence=("#0F4C81", "#E07A5F", "#3D9970"),
             background_color="#FAFAFA",
@@ -35,7 +23,7 @@ def configure_blue_theme(output_directory: Path) -> object:
             line_width=2.5,
             marker_size=6.0,
             save_directory=output_directory,
-            save_format="png",
+            save_format="svg",
             auto_save=False,
             filename_prefix="theme_example",
         )
@@ -44,16 +32,16 @@ def configure_blue_theme(output_directory: Path) -> object:
 
 def create_themed_figures(output_directory: Path) -> dict[str, str]:
     """Create figures with global and temporary theme settings."""
-    model = BlackScholesMertonModel(100.0, 100.0, 1.0, 0.05, 0.20)
+    model = aq.BlackScholesMertonModel(100.0, 100.0, 1.0, 0.05, 0.20)
     global_figure = model.visualize(chart="price_profile", filename="global_theme_profile")
-    with visualization_theme(
+    with aq.visualization_theme(
         backend="plotly",
         color_sequence=("#5B2C6F", "#1F618D"),
         save_format="html",
         save_directory=output_directory,
     ):
         temporary_figure = model.visualize(chart="payoff", filename="temporary_plotly_payoff")
-    active_theme = get_visualization_theme()
+    active_theme = aq.get_visualization_theme()
     return {
         "global_figure": type(global_figure).__name__,
         "temporary_figure": type(temporary_figure).__name__,
@@ -73,10 +61,10 @@ def run() -> None:
             {"backend": theme.backend, "font_family": theme.font_family, "dpi": theme.dpi},
         )
         print_mapping("Themed figures", create_themed_figures(output_directory))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
     finally:
-        reset_visualization_theme()
+        aq.reset_visualization_theme()
 
 
 if __name__ == "__main__":

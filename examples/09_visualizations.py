@@ -4,30 +4,15 @@ from __future__ import annotations
 
 import pandas as pd
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.credit.fundamentals import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    IncomeStatementInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.derivatives import OptionStrategy
-from abaquant.derivatives.models import BlackScholesMertonModel, CoxRossRubinsteinModel
-from abaquant.marketdata import get_ticker, get_tickers
-from abaquant.portfolio.optimization import PortfolioAllocator
-from abaquant.visualization import VisualizationError
 
 
 def build_option_figures() -> dict[str, object]:
     """Create option-model payoff, profile, and lattice figures."""
-    model = BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.20)
-    lattice = CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.20, number_of_steps=6)
+    model = aq.BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.20)
+    lattice = aq.CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.20, number_of_steps=6)
     return {
         "call_payoff": model.visualize(
             chart="payoff", option_type="call", filename="overview_call_payoff"
@@ -61,7 +46,7 @@ def build_option_figures() -> dict[str, object]:
         "put_lattice": lattice.visualize(
             chart="tree", option_type="put", filename="overview_put_lattice"
         ),
-        "strategy_payoff": OptionStrategy.bull_call_spread(
+        "strategy_payoff": aq.OptionStrategy.bull_call_spread(
             lower_strike=100.0,
             upper_strike=115.0,
             lower_premium=6.0,
@@ -75,7 +60,7 @@ def build_portfolio_figures() -> dict[str, object]:
     returns = pd.DataFrame(
         {"ALPHA": [0.01, -0.02, 0.03, 0.02], "BETA": [0.005, 0.01, -0.005, 0.003]}
     )
-    allocator = PortfolioAllocator(returns, annual_risk_free_rate=0.02)
+    allocator = aq.PortfolioAllocator(returns, annual_risk_free_rate=0.02)
     weights = allocator.mean_variance.equal_weight()
     return {
         "weights": allocator.visualize(
@@ -90,14 +75,14 @@ def build_portfolio_figures() -> dict[str, object]:
 
 def build_credit_figures() -> dict[str, object]:
     """Create credit metrics and score figures."""
-    inputs = CreditAnalysisInputs(
-        balance_sheet=BalanceSheetInputs(
+    inputs = aq.CreditAnalysisInputs(
+        balance_sheet=aq.BalanceSheetInputs(
             total_debt=100.0, total_equity=200.0, current_assets=120.0, current_liabilities=60.0
         ),
-        income_statement=IncomeStatementInputs(ebit=50.0, ebitda=60.0, interest_expense=5.0),
-        cash_flow_statement=CashFlowInputs(operating_cash_flow=40.0),
+        income_statement=aq.IncomeStatementInputs(ebit=50.0, ebitda=60.0, interest_expense=5.0),
+        cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=40.0),
     )
-    assessment = calculate_credit_proxy_metrics(inputs)
+    assessment = aq.calculate_credit_proxy_metrics(inputs)
     return {
         "credit_metrics": assessment.visualize(chart="metrics", filename="overview_credit_metrics"),
         "credit_score": assessment.visualize(chart="score", filename="overview_credit_score"),
@@ -107,8 +92,8 @@ def build_credit_figures() -> dict[str, object]:
 def build_marketdata_figures() -> dict[str, object]:
     """Create ticker, statement, and universe figures with an offline provider."""
     provider = DeterministicMarketDataProvider()
-    ticker = get_ticker("DEMO", provider=provider, financial_cache="memory")
-    universe = get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
+    ticker = aq.get_ticker("DEMO", provider=provider, financial_cache="memory")
+    universe = aq.get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
     chain_analytics = ticker.options.analytics("2027-01-15")
     return {
         "ticker_history": ticker.visualize(period="1mo", filename="overview_ticker"),
@@ -143,7 +128,7 @@ def run() -> None:
             {name: type(fig).__name__ for name, fig in all_figures.items()}
             | {"output_directory": str(output_directory)},
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

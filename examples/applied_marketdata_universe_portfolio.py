@@ -2,19 +2,14 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_tickers
-from abaquant.visualization import VisualizationError
 
 
 def build_universe() -> object:
     """Create a deterministic three-asset universe."""
-    return get_tickers(["ALPHA", "BETA", "GAMMA"], provider=DeterministicMarketDataProvider())
+    return aq.get_tickers(["ALPHA", "BETA", "GAMMA"], provider=DeterministicMarketDataProvider())
 
 
 def compute_universe_workflow(universe: object) -> dict[str, object]:
@@ -44,7 +39,7 @@ def run() -> None:
     print_mapping("Universe portfolio workflow", compute_universe_workflow(universe))
     try:
         print_mapping("Universe figures", create_universe_figures(universe))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

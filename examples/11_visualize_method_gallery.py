@@ -2,26 +2,17 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
 from _shared.sample_data import sample_returns
-from abaquant.derivatives import OptionStrategy
-from abaquant.derivatives.models import BlackScholesMertonModel, CoxRossRubinsteinModel
-from abaquant.derivatives.models.sabr import SABRVolatilityModel
-from abaquant.marketdata import get_ticker, get_tickers
-from abaquant.portfolio.optimization import PortfolioAllocator
-from abaquant.visualization import VisualizationError
 
 
 def build_option_gallery() -> dict[str, object]:
     """Return the option-model portion of the visualization gallery."""
-    option = BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.20)
-    lattice = CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.20, number_of_steps=6)
-    sabr = SABRVolatilityModel(100.0, 100.0, 1.0, 0.20, 0.5, -0.3, 0.4)
+    option = aq.BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.20)
+    lattice = aq.CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.20, number_of_steps=6)
+    sabr = aq.SABRVolatilityModel(100.0, 100.0, 1.0, 0.20, 0.5, -0.3, 0.4)
     return {
         "option_payoff": option.visualize(chart="payoff", filename="gallery_option_payoff"),
         "option_profile": option.visualize(
@@ -47,13 +38,13 @@ def build_option_gallery() -> dict[str, object]:
         ),
         "lattice_tree": lattice.visualize(chart="tree", filename="gallery_lattice_tree"),
         "sabr_smile": sabr.visualize(chart="volatility_smile", filename="gallery_sabr_smile"),
-        "strategy_payoff": OptionStrategy.bull_call_spread(
+        "strategy_payoff": aq.OptionStrategy.bull_call_spread(
             lower_strike=100.0,
             upper_strike=115.0,
             lower_premium=6.0,
             upper_premium=2.0,
         ).visualize(chart="payoff", filename="gallery_strategy_payoff"),
-        "strategy_components": OptionStrategy.bull_call_spread(
+        "strategy_components": aq.OptionStrategy.bull_call_spread(
             lower_strike=100.0,
             upper_strike=115.0,
             lower_premium=6.0,
@@ -64,7 +55,7 @@ def build_option_gallery() -> dict[str, object]:
 
 def build_portfolio_gallery() -> dict[str, object]:
     """Return the portfolio portion of the visualization gallery."""
-    allocator = PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    allocator = aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
     weights = allocator.mean_variance.maximum_sharpe()
     return {
         "portfolio_weights": allocator.visualize(
@@ -82,8 +73,8 @@ def build_portfolio_gallery() -> dict[str, object]:
 def build_market_gallery() -> dict[str, object]:
     """Return the market-data portion of the visualization gallery."""
     provider = DeterministicMarketDataProvider()
-    ticker = get_ticker("DEMO", provider=provider, financial_cache="memory")
-    universe = get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
+    ticker = aq.get_ticker("DEMO", provider=provider, financial_cache="memory")
+    universe = aq.get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
     assessment = ticker.credit.assess_from_financials()
     chain_analytics = ticker.options.analytics("2027-01-15")
     return {
@@ -120,7 +111,7 @@ def run() -> None:
             {key: type(value).__name__ for key, value in figures.items()}
             | {"output_directory": str(output_directory)},
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

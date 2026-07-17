@@ -5,15 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from pathlib import Path
 
-from .package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.visualization import (
-    VisualizationTheme,
-    configure_visualization,
-    reset_visualization_theme,
-)
+import abaquant as aq
 
 EXAMPLE_ROOT = Path(__file__).resolve().parents[1]
 FIGURE_DIR = EXAMPLE_ROOT / "generated_figures"
@@ -48,8 +40,8 @@ def configure_example_visuals(
     """Apply a deterministic visual theme and return its output directory."""
     output_directory = FIGURE_DIR / subdirectory
     output_directory.mkdir(parents=True, exist_ok=True)
-    configure_visualization(
-        VisualizationTheme(
+    aq.configure_visualization(
+        aq.VisualizationTheme(
             backend=backend,
             color_sequence=("#0F4C81", "#E07A5F", "#3D9970", "#6C5B7B", "#2E86AB"),
             background_color="#FAFAFA",
@@ -63,7 +55,7 @@ def configure_example_visuals(
             line_width=2.2,
             marker_size=6.0,
             save_directory=output_directory,
-            save_format="png" if backend == "matplotlib" else "html",
+            save_format="svg" if backend == "matplotlib" else "html",
             auto_save=False,
             filename_prefix="example",
         )
@@ -73,4 +65,4 @@ def configure_example_visuals(
 
 def reset_example_visuals() -> None:
     """Restore the package's default visualization theme."""
-    reset_visualization_theme()
+    aq.reset_visualization_theme()

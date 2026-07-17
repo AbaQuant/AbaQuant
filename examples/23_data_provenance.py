@@ -10,17 +10,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from abaquant import RiskDashboard
-from abaquant.credit import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    IncomeStatementInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.derivatives.models import BlackScholesMertonModel
-from abaquant.portfolio import PortfolioAllocator
-from abaquant.rates import RateCurve
+import abaquant as aq
 
 
 def deterministic_returns() -> pd.DataFrame:
@@ -39,8 +29,8 @@ def deterministic_returns() -> pd.DataFrame:
 
 def deterministic_credit_assessment():
     """Return a deterministic manual credit-proxy assessment."""
-    inputs = CreditAnalysisInputs(
-        balance_sheet=BalanceSheetInputs(
+    inputs = aq.CreditAnalysisInputs(
+        balance_sheet=aq.BalanceSheetInputs(
             total_debt=120.0,
             total_equity=260.0,
             current_assets=190.0,
@@ -52,7 +42,7 @@ def deterministic_credit_assessment():
             retained_earnings=105.0,
             long_term_debt=100.0,
         ),
-        income_statement=IncomeStatementInputs(
+        income_statement=aq.IncomeStatementInputs(
             revenue=520.0,
             gross_profit=270.0,
             ebit=85.0,
@@ -60,11 +50,11 @@ def deterministic_credit_assessment():
             interest_expense=10.0,
             net_income=60.0,
         ),
-        cash_flow_statement=CashFlowInputs(operating_cash_flow=82.0),
+        cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=82.0),
         reporting_currency="USD",
         reporting_period="FY2026",
     )
-    return calculate_credit_proxy_metrics(inputs)
+    return aq.calculate_credit_proxy_metrics(inputs)
 
 
 def summarize_provenance(label: str, provenance) -> None:
@@ -78,18 +68,18 @@ def summarize_provenance(label: str, provenance) -> None:
 
 def run() -> dict[str, object]:
     """Run the deterministic data-provenance demonstration."""
-    option = BlackScholesMertonModel(100.0, 105.0, 1.0, 0.04, 0.22)
+    option = aq.BlackScholesMertonModel(100.0, 105.0, 1.0, 0.04, 0.22)
     diagnostics = option.diagnostics("call")
-    curve = RateCurve.from_rates({0.5: 0.04, 1.0: 0.045, 2.0: 0.05})
+    curve = aq.RateCurve.from_rates({0.5: 0.04, 1.0: 0.045, 2.0: 0.05})
 
-    allocator = PortfolioAllocator(
+    allocator = aq.PortfolioAllocator(
         deterministic_returns(), annual_risk_free_rate=curve.zero_rate(1.0)
     )
     backtest = allocator.backtest(
         weights="equal_weight", rebalance="weekly", benchmark="equal_weight"
     )
     credit = deterministic_credit_assessment()
-    dashboard = RiskDashboard(
+    dashboard = aq.RiskDashboard(
         allocator,
         credit_assessments={"NVDA": credit},
         weights={"NVDA": 1 / 3, "MSFT": 1 / 3, "AAPL": 1 / 3},

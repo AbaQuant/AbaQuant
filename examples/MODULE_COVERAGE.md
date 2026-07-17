@@ -34,8 +34,8 @@ visualizations where supported, and `run()` wires the workflow together.
 | `applied_marketdata_ticker_options.py` | Single-ticker applied options workflow. |
 | `applied_marketdata_universe_portfolio.py` | Multi-ticker applied universe workflow. |
 
-Generated figures are written under `examples/generated_figures/` and are not
-checked into the archive.
+Generated figures are written under `examples/generated_figures/`. SVG files are
+committed, while non-SVG generated artifacts are excluded from version control.
 
 
 - `16_fred_rate_curve.py` — Builds a deterministic risk-free-rate curve, shows `zero_rate()` and `discount_factor()`, uses the one-year curve rate inside a Black--Scholes--Merton example, and documents the optional live FRED branch with disk caching.

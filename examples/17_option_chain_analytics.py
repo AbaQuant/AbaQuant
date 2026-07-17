@@ -8,20 +8,15 @@ Yahoo, yfinance, or network access.
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker
-from abaquant.visualization import VisualizationError
 
 
 def build_option_chain_analytics() -> object:
     """Create a deterministic ticker and return one option-chain analytics object."""
     provider = DeterministicMarketDataProvider()
-    ticker = get_ticker("DEMO", provider=provider, financial_cache="memory")
+    ticker = aq.get_ticker("DEMO", provider=provider, financial_cache="memory")
     return ticker.options.analytics(expiry="2027-01-15")
 
 
@@ -80,7 +75,7 @@ def run() -> None:
     print_mapping("Option-chain analytics", inspect_chain_analytics(analytics))
     try:
         print_mapping("Created option-chain figures", create_chain_visualizations(analytics))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

@@ -482,7 +482,15 @@ def _plot_surface(
         )
         axes = figure.add_subplot(111, projection="3d")
         axes.set_facecolor(theme.background_color)
-        axes.plot_surface(mesh_x, mesh_y, z_values, linewidth=0, antialiased=True, alpha=0.92)
+        axes.plot_surface(
+            mesh_x,
+            mesh_y,
+            z_values,
+            linewidth=0,
+            antialiased=True,
+            alpha=0.92,
+            rasterized=True,
+        )
         axes.set_xlabel(x_label, fontname=theme.font_family, fontsize=theme.base_font_size)
         axes.set_ylabel(y_label, fontname=theme.font_family, fontsize=theme.base_font_size)
         axes.set_zlabel(z_label, fontname=theme.font_family, fontsize=theme.base_font_size)

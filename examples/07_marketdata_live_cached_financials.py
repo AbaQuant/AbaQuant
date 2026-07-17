@@ -8,19 +8,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import abaquant as aq
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker
-from abaquant.marketdata.errors import MarketDataError
-from abaquant.visualization import VisualizationError
 
 
 def build_live_ticker(symbol: str = "NVDA") -> object:
     """Create one Yahoo-backed ticker with disk financial-statement caching."""
-    return get_ticker(
+    return aq.get_ticker(
         symbol,
         provider="yahoo",
         financial_cache="disk",
@@ -70,9 +64,9 @@ def run() -> None:
         print_mapping("Live cached financials", summarize_live_financials(ticker))
         try:
             print_mapping("Live financial figures", create_live_visualizations(ticker))
-        except VisualizationError as exc:
+        except aq.VisualizationError as exc:
             print(f"Visualization skipped: {exc}")
-    except MarketDataError as exc:
+    except aq.MarketDataError as exc:
         print("Live Yahoo example skipped.")
         print(exc)
 

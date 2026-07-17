@@ -10,18 +10,8 @@ from __future__ import annotations
 
 import pandas as pd
 
+import abaquant as aq
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives.calibration import (
-    BSMFlatVolCalibration,
-    HestonCalibration,
-    SABRSmileCalibration,
-)
-from abaquant.derivatives.models import BlackScholesMertonModel, SABRVolatilityModel
-from abaquant.visualization import VisualizationError
 
 
 def build_bsm_chain() -> pd.DataFrame:
@@ -33,7 +23,7 @@ def build_bsm_chain() -> pd.DataFrame:
     volatility = 0.24
     rows = []
     for strike in (85.0, 95.0, 100.0, 105.0, 115.0):
-        model = BlackScholesMertonModel(
+        model = aq.BlackScholesMertonModel(
             spot_price,
             strike,
             maturity_years,
@@ -61,7 +51,7 @@ def build_sabr_smile() -> pd.DataFrame:
     maturity_years = 1.0
     rows = []
     for strike in (80.0, 90.0, 100.0, 110.0, 120.0):
-        implied_volatility = SABRVolatilityModel(
+        implied_volatility = aq.SABRVolatilityModel(
             forward_price,
             strike,
             maturity_years,
@@ -86,7 +76,7 @@ def build_sabr_smile() -> pd.DataFrame:
 
 def run_calibrations() -> dict[str, object]:
     """Fit BSM, SABR, and compact Heston calibrations."""
-    bsm_result = BSMFlatVolCalibration(
+    bsm_result = aq.BSMFlatVolCalibration(
         build_bsm_chain(),
         spot_price=100.0,
         maturity_years=1.0,
@@ -94,14 +84,14 @@ def run_calibrations() -> dict[str, object]:
         dividend_yield=0.01,
         objective="price",
     ).fit()
-    sabr_result = SABRSmileCalibration(
+    sabr_result = aq.SABRSmileCalibration(
         build_sabr_smile(),
         forward_price=100.0,
         maturity_years=1.0,
         beta=0.8,
         initial_parameters={"alpha": 0.25, "rho": -0.1, "nu": 0.4},
     ).fit()
-    heston_result = HestonCalibration(
+    heston_result = aq.HestonCalibration(
         build_bsm_chain().iloc[[1, 2, 3]],
         spot_price=100.0,
         maturity_years=1.0,
@@ -125,7 +115,7 @@ def run_calibrations() -> dict[str, object]:
 def create_calibration_visuals() -> dict[str, str]:
     """Create model-versus-market and residual calibration figures."""
     output_directory = configure_example_visuals(subdirectory="derivative_calibration")
-    bsm_result = BSMFlatVolCalibration(
+    bsm_result = aq.BSMFlatVolCalibration(
         build_bsm_chain(),
         spot_price=100.0,
         maturity_years=1.0,
@@ -133,7 +123,7 @@ def create_calibration_visuals() -> dict[str, str]:
         dividend_yield=0.01,
         objective="price",
     ).fit()
-    sabr_result = SABRSmileCalibration(
+    sabr_result = aq.SABRSmileCalibration(
         build_sabr_smile(),
         forward_price=100.0,
         maturity_years=1.0,
@@ -158,7 +148,7 @@ def run() -> None:
     print_mapping("Derivative calibration", run_calibrations())
     try:
         print_mapping("Created calibration figures", create_calibration_visuals())
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

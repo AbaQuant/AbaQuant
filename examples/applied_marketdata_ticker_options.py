@@ -2,19 +2,16 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker
-from abaquant.visualization import VisualizationError
 
 
 def build_ticker() -> object:
     """Create one deterministic ticker."""
-    return get_ticker("DEMO", provider=DeterministicMarketDataProvider(), financial_cache="memory")
+    return aq.get_ticker(
+        "DEMO", provider=DeterministicMarketDataProvider(), financial_cache="memory"
+    )
 
 
 def compute_option_workflow(ticker: object) -> dict[str, object]:
@@ -47,7 +44,7 @@ def run() -> None:
     print_mapping("Ticker options workflow", compute_option_workflow(ticker))
     try:
         print_mapping("Ticker figures", create_ticker_figures(ticker))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

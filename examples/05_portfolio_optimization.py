@@ -5,31 +5,22 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     print_section,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_prices, sample_returns
 
-ensure_package_importable()
 
-from abaquant.portfolio.backtesting import run_backtest
-from abaquant.portfolio.efficient_frontier import markowitz_frontier, monte_carlo_portfolios
-from abaquant.portfolio.optimization import PortfolioAllocator
-from abaquant.portfolio.risk_metrics import compute_all_metrics, portfolio_returns
-from abaquant.portfolio.stress_testing import run_all_scenarios
-from abaquant.visualization import VisualizationError
-
-
-def build_allocator() -> PortfolioAllocator:
+def build_allocator() -> aq.PortfolioAllocator:
     """Create the core allocator from deterministic periodic returns."""
-    return PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    return aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
 
 
-def calculate_allocation_families(allocator: PortfolioAllocator) -> dict[str, object]:
+def calculate_allocation_families(allocator: aq.PortfolioAllocator) -> dict[str, object]:
     """Run mean-variance, risk-based, and downside-risk allocations."""
     return {
         "equal_weight": allocator.mean_variance.equal_weight(),
@@ -58,11 +49,11 @@ def calculate_frontier_and_risk() -> dict[str, object]:
     returns = sample_returns()
     mean_returns = returns.mean() * 252
     covariance = returns.cov() * 252
-    frontier = markowitz_frontier(mean_returns, covariance, n_points=8)
-    cloud = monte_carlo_portfolios(mean_returns, covariance, n_portfolios=250, rf=0.02, seed=42)
+    frontier = aq.markowitz_frontier(mean_returns, covariance, n_points=8)
+    cloud = aq.monte_carlo_portfolios(mean_returns, covariance, n_portfolios=250, rf=0.02, seed=42)
     weights = np.array([0.4, 0.35, 0.25])
-    portfolio_series = portfolio_returns(returns, weights)
-    metrics = compute_all_metrics(portfolio_series, rf=0.02)
+    portfolio_series = aq.portfolio_returns(returns, weights)
+    metrics = aq.compute_all_metrics(portfolio_series, rf=0.02)
     return {
         "frontier_rows": len(frontier),
         "cloud_rows": len(cloud),
@@ -74,11 +65,11 @@ def calculate_frontier_and_risk() -> dict[str, object]:
 def run_backtest_and_stress_tests() -> dict[str, object]:
     """Run compact backtest and stress-test examples on synthetic prices."""
     prices = sample_prices()
-    backtest = run_backtest(
+    backtest = aq.run_backtest(
         prices, strategy_name="equal_weight", rebalance_freq="monthly", lookback_days=8
     )
     weights = pd.Series([0.4, 0.35, 0.25], index=prices.columns)
-    stress = run_all_scenarios(prices, weights)
+    stress = aq.run_all_scenarios(prices, weights)
     return {
         "backtest_available": backtest is not None,
         "stress_scenarios": len(stress),
@@ -86,7 +77,7 @@ def run_backtest_and_stress_tests() -> dict[str, object]:
 
 
 def create_portfolio_visualizations(
-    allocator: PortfolioAllocator, allocations: dict[str, object]
+    allocator: aq.PortfolioAllocator, allocations: dict[str, object]
 ) -> dict[str, str]:
     """Create and save portfolio weights, path, and correlation charts."""
     output_directory = configure_example_visuals(subdirectory="portfolio_optimization")
@@ -121,7 +112,7 @@ def run() -> None:
         print_mapping(
             "Created portfolio figures", create_portfolio_visualizations(allocator, allocations)
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

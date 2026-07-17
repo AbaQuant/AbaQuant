@@ -2,51 +2,48 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     print_section,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives import OptionStrategy
-from abaquant.visualization import VisualizationError
 
 
-def build_bull_call_spread() -> OptionStrategy:
+def build_bull_call_spread() -> aq.OptionStrategy:
     """Create a debit call spread using the strategy builder."""
-    return OptionStrategy().buy_call(strike=110.0, premium=4.2).sell_call(strike=120.0, premium=1.8)
+    return (
+        aq.OptionStrategy().buy_call(strike=110.0, premium=4.2).sell_call(strike=120.0, premium=1.8)
+    )
 
 
 def compare_named_strategies() -> dict[str, object]:
     """Compute diagnostics for predefined strategy constructors."""
     strategies = {
-        "bull_call_spread": OptionStrategy.bull_call_spread(
+        "bull_call_spread": aq.OptionStrategy.bull_call_spread(
             lower_strike=110.0,
             upper_strike=120.0,
             lower_premium=4.2,
             upper_premium=1.8,
         ),
-        "protective_put": OptionStrategy.protective_put(
+        "protective_put": aq.OptionStrategy.protective_put(
             underlying_entry_price=100.0,
             put_strike=95.0,
             put_premium=3.0,
         ),
-        "straddle": OptionStrategy.straddle(
+        "straddle": aq.OptionStrategy.straddle(
             strike=100.0,
             call_premium=5.0,
             put_premium=4.5,
         ),
-        "strangle": OptionStrategy.strangle(
+        "strangle": aq.OptionStrategy.strangle(
             put_strike=95.0,
             call_strike=105.0,
             put_premium=3.0,
             call_premium=3.4,
         ),
-        "iron_condor": OptionStrategy.iron_condor(
+        "iron_condor": aq.OptionStrategy.iron_condor(
             lower_put_strike=85.0,
             short_put_strike=95.0,
             short_call_strike=105.0,
@@ -56,7 +53,7 @@ def compare_named_strategies() -> dict[str, object]:
             short_call_premium=3.0,
             upper_call_premium=1.1,
         ),
-        "butterfly": OptionStrategy.butterfly(
+        "butterfly": aq.OptionStrategy.butterfly(
             lower_strike=90.0,
             middle_strike=100.0,
             upper_strike=110.0,
@@ -76,14 +73,14 @@ def compare_named_strategies() -> dict[str, object]:
     }
 
 
-def print_strategy_profile(strategy: OptionStrategy) -> None:
+def print_strategy_profile(strategy: aq.OptionStrategy) -> None:
     """Print a small payoff profile for one strategy."""
     profile = strategy.profile(spot_prices=[90.0, 110.0, 112.4, 120.0, 130.0])
     print_section("Bull call spread profile")
     print(profile[["spot_price", "gross_payoff", "net_profit"]].to_string(index=False))
 
 
-def create_strategy_figures(strategy: OptionStrategy) -> dict[str, object]:
+def create_strategy_figures(strategy: aq.OptionStrategy) -> dict[str, object]:
     """Create aggregate and component payoff charts."""
     output_directory = configure_example_visuals(subdirectory="option_strategy_builder")
     figures = {
@@ -91,7 +88,7 @@ def create_strategy_figures(strategy: OptionStrategy) -> dict[str, object]:
         "components": strategy.visualize(
             chart="components", filename="02_bull_call_spread_components"
         ),
-        "iron_condor": OptionStrategy.iron_condor(
+        "iron_condor": aq.OptionStrategy.iron_condor(
             lower_put_strike=85.0,
             short_put_strike=95.0,
             short_call_strike=105.0,
@@ -126,7 +123,7 @@ def run() -> None:
         print_strategy_profile(spread)
         print_mapping("Named strategy constructors", compare_named_strategies(), decimals=4)
         print_mapping("Strategy visualizations", create_strategy_figures(spread))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

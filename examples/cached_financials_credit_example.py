@@ -2,18 +2,16 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import print_mapping
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker
 
 
 def build_cached_ticker() -> object:
     """Create a ticker backed by deterministic statement fixtures."""
-    return get_ticker("DEMO", provider=DeterministicMarketDataProvider(), financial_cache="memory")
+    return aq.get_ticker(
+        "DEMO", provider=DeterministicMarketDataProvider(), financial_cache="memory"
+    )
 
 
 def run() -> None:

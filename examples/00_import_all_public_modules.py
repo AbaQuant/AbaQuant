@@ -1,17 +1,15 @@
 """Import every public module used by the examples.
 
 The script is intentionally small and function-based so it can double as a
-smoke test for source-package imports.
+smoke test for the installed package.
 """
 
 from __future__ import annotations
 
 import importlib
 
+import abaquant as aq
 from _shared.output import print_mapping, print_section
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
 
 PUBLIC_MODULES = (
     "abaquant",
@@ -90,6 +88,7 @@ def import_public_modules() -> dict[str, str]:
 def run() -> None:
     """Execute the import smoke test."""
     print_section("Public module import coverage")
+    print(f"AbaQuant version: {aq.__version__}")
     statuses = import_public_modules()
     print(f"Imported {len(statuses)} modules.")
     print_mapping("Representative imports", dict(list(statuses.items())[:8]))

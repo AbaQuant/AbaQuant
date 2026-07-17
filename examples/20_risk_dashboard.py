@@ -2,32 +2,16 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_credit_input_values, sample_returns
-
-ensure_package_importable()
-
-from abaquant import RiskDashboard
-from abaquant.credit import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    CreditHistoricalSeries,
-    IncomeStatementInputs,
-    MarketEquityObservation,
-    PriorPeriodInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.portfolio import PortfolioAllocator
-from abaquant.visualization import VisualizationError
 
 
 def build_credit_assessment(debt_multiplier: float = 1.0):
     """Create one deterministic credit-proxy assessment for the dashboard."""
     values = sample_credit_input_values()
-    inputs = CreditAnalysisInputs(
-        balance_sheet=BalanceSheetInputs(
+    inputs = aq.CreditAnalysisInputs(
+        balance_sheet=aq.BalanceSheetInputs(
             total_debt=values["total_debt"] * debt_multiplier,
             total_equity=values["total_equity"],
             current_assets=values["current_assets"],
@@ -39,7 +23,7 @@ def build_credit_assessment(debt_multiplier: float = 1.0):
             retained_earnings=values["retained_earnings"],
             long_term_debt=values["long_term_debt"] * debt_multiplier,
         ),
-        income_statement=IncomeStatementInputs(
+        income_statement=aq.IncomeStatementInputs(
             revenue=values["revenue"],
             gross_profit=values["gross_profit"],
             ebit=values["ebit"],
@@ -47,8 +31,8 @@ def build_credit_assessment(debt_multiplier: float = 1.0):
             interest_expense=values["interest_expense"],
             net_income=values["net_income"],
         ),
-        cash_flow_statement=CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
-        prior_period=PriorPeriodInputs(
+        cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
+        prior_period=aq.PriorPeriodInputs(
             total_assets=values["previous_total_assets"],
             net_income=values["previous_net_income"],
             long_term_debt=values["previous_long_term_debt"],
@@ -58,20 +42,20 @@ def build_credit_assessment(debt_multiplier: float = 1.0):
             gross_profit=values["previous_gross_profit"],
             revenue=values["previous_revenue"],
         ),
-        market_equity=MarketEquityObservation(market_value_equity=650.0),
-        historical_series=CreditHistoricalSeries(
+        market_equity=aq.MarketEquityObservation(market_value_equity=650.0),
+        historical_series=aq.CreditHistoricalSeries(
             earnings_history=(42.0, 47.0, 53.0, 60.0),
             leverage_history=(0.60, 0.54, 0.48, 0.42),
         ),
         reporting_currency="USD",
         reporting_period="FY2025",
     )
-    return calculate_credit_proxy_metrics(inputs)
+    return aq.calculate_credit_proxy_metrics(inputs)
 
 
-def build_dashboard() -> RiskDashboard:
+def build_dashboard() -> aq.RiskDashboard:
     """Create one deterministic integrated risk dashboard."""
-    allocator = PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    allocator = aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
     backtest = allocator.backtest(
         weights="inverse_volatility",
         rebalance="monthly",
@@ -80,7 +64,7 @@ def build_dashboard() -> RiskDashboard:
         benchmark="equal_weight",
         lookback=10,
     )
-    return RiskDashboard(
+    return aq.RiskDashboard(
         allocator,
         credit_assessments={
             "ALPHA": build_credit_assessment(0.85),
@@ -92,7 +76,7 @@ def build_dashboard() -> RiskDashboard:
     )
 
 
-def compute_dashboard_outputs(dashboard: RiskDashboard) -> dict[str, object]:
+def compute_dashboard_outputs(dashboard: aq.RiskDashboard) -> dict[str, object]:
     """Return selected dashboard outputs for deterministic examples."""
     summary = dashboard.summary()
     risk_table = dashboard.risk_contribution()
@@ -108,7 +92,7 @@ def compute_dashboard_outputs(dashboard: RiskDashboard) -> dict[str, object]:
     }
 
 
-def create_dashboard_figures(dashboard: RiskDashboard) -> dict[str, str]:
+def create_dashboard_figures(dashboard: aq.RiskDashboard) -> dict[str, str]:
     """Save the main dashboard charts to the deterministic example directory."""
     output_directory = configure_example_visuals(subdirectory="risk_dashboard")
     figures = {
@@ -131,7 +115,7 @@ def run() -> None:
     print_mapping("Risk dashboard outputs", compute_dashboard_outputs(dashboard))
     try:
         print_mapping("Risk dashboard figures", create_dashboard_figures(dashboard))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

@@ -2,27 +2,22 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_frame,
     print_mapping,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_returns
 
-ensure_package_importable()
 
-from abaquant.portfolio import PortfolioAllocator, run_rebalanced_backtest
-from abaquant.visualization import VisualizationError
-
-
-def build_allocator() -> PortfolioAllocator:
+def build_allocator() -> aq.PortfolioAllocator:
     """Create a deterministic allocator from synthetic periodic returns."""
-    return PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    return aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
 
 
-def run_core_backtest(allocator: PortfolioAllocator):
+def run_core_backtest(allocator: aq.PortfolioAllocator):
     """Run the object-oriented backtest from a portfolio allocator."""
     return allocator.backtest(
         weights="inverse_volatility",
@@ -38,7 +33,7 @@ def run_core_backtest(allocator: PortfolioAllocator):
 
 def run_functional_backtest():
     """Run the same backtest through the functional helper."""
-    return run_rebalanced_backtest(
+    return aq.run_rebalanced_backtest(
         sample_returns(),
         weights={"ALPHA": 0.45, "BETA": 0.35, "GAMMA": 0.20},
         rebalance="monthly",
@@ -102,7 +97,7 @@ def run() -> None:
         print_mapping(
             "Created backtest figures", create_backtest_visualizations(allocator_backtest)
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

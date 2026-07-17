@@ -2,29 +2,23 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_returns
 
-ensure_package_importable()
 
-from abaquant.marketdata import get_ticker, get_tickers
-from abaquant.portfolio.optimization import PortfolioAllocator
-from abaquant.visualization import VisualizationError
-
-
-def build_dashboard_objects() -> tuple[PortfolioAllocator, object, object]:
+def build_dashboard_objects() -> tuple[aq.PortfolioAllocator, object, object]:
     """Create portfolio, ticker, and universe objects for the dashboard."""
-    allocator = PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    allocator = aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
     provider = DeterministicMarketDataProvider()
-    ticker = get_ticker("DEMO", provider=provider, financial_cache="memory")
-    universe = get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
+    ticker = aq.get_ticker("DEMO", provider=provider, financial_cache="memory")
+    universe = aq.get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
     return allocator, ticker, universe
 
 
 def compute_dashboard_metrics(
-    allocator: PortfolioAllocator, ticker: object, universe: object
+    allocator: aq.PortfolioAllocator, ticker: object, universe: object
 ) -> dict[str, object]:
     """Compute numerical values shown by the dashboard."""
     allocation = allocator.mean_variance.maximum_sharpe()
@@ -39,7 +33,7 @@ def compute_dashboard_metrics(
 
 
 def create_dashboard_figures(
-    allocator: PortfolioAllocator, ticker: object, universe: object
+    allocator: aq.PortfolioAllocator, ticker: object, universe: object
 ) -> dict[str, str]:
     """Save all dashboard charts to one deterministic output directory."""
     output_directory = configure_example_visuals(subdirectory="portfolio_credit_dashboard")
@@ -77,7 +71,7 @@ def run() -> None:
         allocator, ticker, universe = build_dashboard_objects()
         print_mapping("Dashboard metrics", compute_dashboard_metrics(allocator, ticker, universe))
         print_mapping("Dashboard figures", create_dashboard_figures(allocator, ticker, universe))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

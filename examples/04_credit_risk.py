@@ -4,46 +4,21 @@ from __future__ import annotations
 
 import numpy as np
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     print_section,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_credit_input_values
 
-ensure_package_importable()
 
-from abaquant.credit.cdo import gauss_hermite_normal, value_tranche
-from abaquant.credit.cds import value_cds
-from abaquant.credit.copula import gaussian_copula_simulation
-from abaquant.credit.distribution import expected_value_and_sigma, independent_distribution
-from abaquant.credit.fundamentals import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    CreditHistoricalSeries,
-    IncomeStatementInputs,
-    MarketEquityObservation,
-    PriorPeriodInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.credit.risk import (
-    var_cvar_from_distribution,
-    var_cvar_from_simulations,
-    var_cvar_parametric,
-)
-from abaquant.credit.transitions import build_transition_matrix
-from abaquant.credit.valuation import bond_values_per_rating
-from abaquant.visualization import VisualizationError
-
-
-def build_credit_inputs() -> CreditAnalysisInputs:
+def build_credit_inputs() -> aq.CreditAnalysisInputs:
     """Build one complete grouped credit-analysis input object."""
     values = sample_credit_input_values()
-    return CreditAnalysisInputs(
-        balance_sheet=BalanceSheetInputs(
+    return aq.CreditAnalysisInputs(
+        balance_sheet=aq.BalanceSheetInputs(
             total_debt=values["total_debt"],
             total_equity=values["total_equity"],
             current_assets=values["current_assets"],
@@ -55,7 +30,7 @@ def build_credit_inputs() -> CreditAnalysisInputs:
             retained_earnings=values["retained_earnings"],
             long_term_debt=values["long_term_debt"],
         ),
-        income_statement=IncomeStatementInputs(
+        income_statement=aq.IncomeStatementInputs(
             revenue=values["revenue"],
             gross_profit=values["gross_profit"],
             ebit=values["ebit"],
@@ -63,8 +38,8 @@ def build_credit_inputs() -> CreditAnalysisInputs:
             interest_expense=values["interest_expense"],
             net_income=values["net_income"],
         ),
-        cash_flow_statement=CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
-        prior_period=PriorPeriodInputs(
+        cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=values["operating_cash_flow"]),
+        prior_period=aq.PriorPeriodInputs(
             total_assets=values["previous_total_assets"],
             net_income=values["previous_net_income"],
             long_term_debt=values["previous_long_term_debt"],
@@ -74,8 +49,8 @@ def build_credit_inputs() -> CreditAnalysisInputs:
             gross_profit=values["previous_gross_profit"],
             revenue=values["previous_revenue"],
         ),
-        market_equity=MarketEquityObservation(market_value_equity=600.0),
-        historical_series=CreditHistoricalSeries(
+        market_equity=aq.MarketEquityObservation(market_value_equity=600.0),
+        historical_series=aq.CreditHistoricalSeries(
             earnings_history=(40.0, 46.0, 55.0, 60.0),
             leverage_history=(0.55, 0.49, 0.43, 0.40),
         ),
@@ -86,7 +61,7 @@ def build_credit_inputs() -> CreditAnalysisInputs:
 
 def compute_credit_proxy_summary() -> tuple[object, dict[str, object]]:
     """Calculate fundamental proxy metrics and select dashboard values."""
-    assessment = calculate_credit_proxy_metrics(build_credit_inputs())
+    assessment = aq.calculate_credit_proxy_metrics(build_credit_inputs())
     summary = {
         "synthetic_score": assessment.synthetic_credit_proxy_score,
         "synthetic_band": assessment.synthetic_credit_proxy_band,
@@ -100,15 +75,15 @@ def compute_credit_proxy_summary() -> tuple[object, dict[str, object]]:
 
 def run_transition_and_valuation_examples() -> dict[str, object]:
     """Build transition, bond-valuation, and distribution examples."""
-    transition_matrix = build_transition_matrix()
+    transition_matrix = aq.build_transition_matrix()
     spreads = np.tile(np.linspace(0.01, 0.08, 5), (17, 1))
-    values_by_rating = bond_values_per_rating(100.0, 0.05, 5, 1, 0.40, spreads)
+    values_by_rating = aq.bond_values_per_rating(100.0, 0.05, 5, 1, 0.40, spreads)
     bonds_data = [
         {"name": "Bond A", "rating_idx": 0, "values": values_by_rating},
         {"name": "Bond B", "rating_idx": 2, "values": values_by_rating * 0.95},
     ]
-    distribution = independent_distribution(bonds_data, transition_matrix)
-    expected_values, moments = expected_value_and_sigma(bonds_data, transition_matrix)
+    distribution = aq.independent_distribution(bonds_data, transition_matrix)
+    expected_values, moments = aq.expected_value_and_sigma(bonds_data, transition_matrix)
     return {
         "transition_shape": transition_matrix.shape,
         "aaa_bond_value": float(values_by_rating[0]),
@@ -121,9 +96,9 @@ def run_transition_and_valuation_examples() -> dict[str, object]:
 
 def run_cds_cdo_and_var_examples() -> dict[str, object]:
     """Value simple CDS/CDO cases and compute VaR/CVaR summaries."""
-    cds = value_cds(hazard_rate=0.03, discount_rate=0.04, maturity=5, recovery_rate=0.40)
-    nodes, weights = gauss_hermite_normal(10)
-    tranche = value_tranche(
+    cds = aq.value_cds(hazard_rate=0.03, discount_rate=0.04, maturity=5, recovery_rate=0.40)
+    nodes, weights = aq.gauss_hermite_normal(10)
+    tranche = aq.value_tranche(
         hazard_rate=0.03,
         rho=0.25,
         n=20,
@@ -139,24 +114,26 @@ def run_cds_cdo_and_var_examples() -> dict[str, object]:
     return {
         "cds_fair_spread": cds["spread"],
         "tranche_protection_leg": tranche["A"],
-        "parametric_var_95": var_cvar_parametric(100.0, 5.0)[0.95]["VaR"],
-        "simulation_cvar_95": var_cvar_from_simulations(simulations)[0.95]["CVaR"],
+        "parametric_var_95": aq.var_cvar_parametric(100.0, 5.0)[0.95]["VaR"],
+        "simulation_cvar_95": aq.var_cvar_from_simulations(simulations)[0.95]["CVaR"],
         "distribution_var_levels": sorted(
-            var_cvar_from_distribution([(1.0, 0.25), (2.0, 0.25), (3.0, 0.25), (4.0, 0.25)]).keys()
+            aq.var_cvar_from_distribution(
+                [(1.0, 0.25), (2.0, 0.25), (3.0, 0.25), (4.0, 0.25)]
+            ).keys()
         ),
     }
 
 
 def run_copula_example() -> dict[str, object]:
     """Simulate correlated rating transitions with a small portfolio."""
-    transition_matrix = build_transition_matrix()
+    transition_matrix = aq.build_transition_matrix()
     corr = np.array([[1.0, 0.25], [0.25, 1.0]])
     values = np.linspace(90.0, 105.0, transition_matrix.shape[1])
     bonds = [
         {"rating_idx": 0, "values": values},
         {"rating_idx": 1, "values": values * 0.96},
     ]
-    simulation = gaussian_copula_simulation(bonds, transition_matrix, corr, n_sims=500, seed=7)
+    simulation = aq.gaussian_copula_simulation(bonds, transition_matrix, corr, n_sims=500, seed=7)
     return {"simulation_shape": simulation.shape, "first_row_sum": float(simulation[0].sum())}
 
 
@@ -186,7 +163,7 @@ def run() -> None:
     print_mapping("Copula simulation", run_copula_example())
     try:
         print_mapping("Created credit figures", create_credit_visualizations(assessment))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

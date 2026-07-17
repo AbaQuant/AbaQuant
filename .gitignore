@@ -11,7 +11,9 @@ docs/_build/
 docs_build/
 *.log
 examples/example_figures/
-examples/generated_figures/
+examples/generated_figures/**
+!examples/generated_figures/**/
+!examples/generated_figures/**/*.svg
 examples/generated_reports/
 notebooks/generated_figures/
 .qa_example_cache/

@@ -2,30 +2,14 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
 from _shared.sample_data import sample_returns
-
-ensure_package_importable()
-
-from abaquant.credit import (
-    BalanceSheetInputs,
-    CashFlowInputs,
-    CreditAnalysisInputs,
-    CreditHistoricalSeries,
-    IncomeStatementInputs,
-    MarketEquityObservation,
-    PriorPeriodInputs,
-    calculate_credit_proxy_metrics,
-)
-from abaquant.derivatives.models import BlackScholesMertonModel
-from abaquant.portfolio import PortfolioAllocator
-from abaquant.visualization import VisualizationError
 
 
 def derivative_scenarios() -> object:
     """Build a spot--volatility scenario grid for a call option."""
-    option_model = BlackScholesMertonModel(
+    option_model = aq.BlackScholesMertonModel(
         spot_price=100.0,
         strike_price=105.0,
         maturity_years=1.0,
@@ -41,7 +25,7 @@ def derivative_scenarios() -> object:
 
 def portfolio_scenarios() -> object:
     """Build a one-period asset-shock scenario for a static allocation."""
-    allocator = PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
+    allocator = aq.PortfolioAllocator(sample_returns(), annual_risk_free_rate=0.02)
     weights = allocator.mean_variance.maximum_sharpe()
     return allocator.scenario_analysis(
         shocks={"ALPHA": -0.20, "BETA": -0.10, "GAMMA": -0.15},
@@ -52,9 +36,9 @@ def portfolio_scenarios() -> object:
 
 def credit_scenarios() -> object:
     """Build a debt and EBITDA multiplier grid for a credit-proxy assessment."""
-    assessment = calculate_credit_proxy_metrics(
-        CreditAnalysisInputs(
-            balance_sheet=BalanceSheetInputs(
+    assessment = aq.calculate_credit_proxy_metrics(
+        aq.CreditAnalysisInputs(
+            balance_sheet=aq.BalanceSheetInputs(
                 total_debt=120.0,
                 total_equity=300.0,
                 current_assets=180.0,
@@ -67,7 +51,7 @@ def credit_scenarios() -> object:
                 long_term_debt=105.0,
                 shares_outstanding=100.0,
             ),
-            income_statement=IncomeStatementInputs(
+            income_statement=aq.IncomeStatementInputs(
                 revenue=700.0,
                 gross_profit=310.0,
                 ebit=90.0,
@@ -75,8 +59,8 @@ def credit_scenarios() -> object:
                 interest_expense=9.0,
                 net_income=62.0,
             ),
-            cash_flow_statement=CashFlowInputs(operating_cash_flow=78.0),
-            prior_period=PriorPeriodInputs(
+            cash_flow_statement=aq.CashFlowInputs(operating_cash_flow=78.0),
+            prior_period=aq.PriorPeriodInputs(
                 total_assets=500.0,
                 net_income=55.0,
                 long_term_debt=112.0,
@@ -86,8 +70,8 @@ def credit_scenarios() -> object:
                 gross_profit=290.0,
                 revenue=660.0,
             ),
-            market_equity=MarketEquityObservation(market_value_equity=950.0),
-            historical_series=CreditHistoricalSeries(
+            market_equity=aq.MarketEquityObservation(market_value_equity=950.0),
+            historical_series=aq.CreditHistoricalSeries(
                 earnings_history=(46.0, 51.0, 55.0, 62.0),
                 leverage_history=(0.54, 0.48, 0.43, 0.40),
             ),
@@ -162,7 +146,7 @@ def run() -> None:
             "Scenario figures",
             create_scenario_figures(derivative_grid, portfolio_scenario, credit_grid),
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

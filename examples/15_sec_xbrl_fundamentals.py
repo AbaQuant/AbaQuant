@@ -13,13 +13,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
+import abaquant as aq
 from _shared.output import print_mapping, print_section
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker
-from abaquant.marketdata.providers import SecCompanyFacts, SecXbrlProvider
 
 
 def _fact(value: float, end: str, *, fp: str = "FY", form: str = "10-K") -> dict[str, Any]:
@@ -82,25 +77,27 @@ def _sec_company_facts_fixture() -> dict[str, Any]:
     }
 
 
-class OfflineSecProvider(SecXbrlProvider):
+class OfflineSecProvider(aq.marketdata.providers.SecXbrlProvider):
     """SEC provider variant that serves fixture Company Facts instead of HTTP."""
 
     def __init__(self) -> None:
         """Create a provider with a fixed ticker-to-CIK map."""
         super().__init__(cik_by_symbol={"NVDA": "1045810"})
 
-    def company_facts(self, symbol: str, **kwargs) -> SecCompanyFacts:
+    def company_facts(self, symbol: str, **kwargs) -> aq.marketdata.providers.SecCompanyFacts:
         """Return fixture Company Facts with the same shape as SEC JSON."""
         clean_symbol = symbol.upper()
         cached = self._company_facts_cache.get(clean_symbol)
         if cached is not None:
             return cached
-        facts = SecCompanyFacts(clean_symbol, "0001045810", _sec_company_facts_fixture())
+        facts = aq.marketdata.providers.SecCompanyFacts(
+            clean_symbol, "0001045810", _sec_company_facts_fixture()
+        )
         self._company_facts_cache[clean_symbol] = facts
         return facts
 
 
-class CachedOfflineSecProvider(SecXbrlProvider):
+class CachedOfflineSecProvider(aq.marketdata.providers.SecXbrlProvider):
     """SEC provider variant that demonstrates persistent raw JSON caching."""
 
     def __init__(self, cache_directory: str | Path) -> None:
@@ -132,7 +129,7 @@ class OfflineQuoteProvider:
 
 def build_ticker():
     """Create a ticker that uses offline quotes and SEC-style fundamentals."""
-    return get_ticker(
+    return aq.get_ticker(
         "NVDA",
         provider=OfflineQuoteProvider(),
         fundamentals_provider=OfflineSecProvider(),
@@ -192,7 +189,7 @@ def demonstrate_sec_disk_cache() -> None:
     """Show that SEC raw facts and normalized statements persist across instances."""
     with TemporaryDirectory() as directory:
         first_sec_provider = CachedOfflineSecProvider(directory)
-        first_ticker = get_ticker(
+        first_ticker = aq.get_ticker(
             "NVDA",
             provider=OfflineQuoteProvider(),
             fundamentals_provider=first_sec_provider,
@@ -202,7 +199,7 @@ def demonstrate_sec_disk_cache() -> None:
         first_total_debt = first_ticker.financials.total_debt(source="sec")
 
         second_sec_provider = CachedOfflineSecProvider(directory)
-        second_ticker = get_ticker(
+        second_ticker = aq.get_ticker(
             "NVDA",
             provider=OfflineQuoteProvider(),
             fundamentals_provider=second_sec_provider,

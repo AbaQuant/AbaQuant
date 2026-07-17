@@ -10,24 +10,19 @@ from __future__ import annotations
 
 import os
 
+import abaquant as aq
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     print_section,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives.models import BlackScholesMertonModel
-from abaquant.rates import ManualRateProvider, get_rate_curve
 
 
 def build_manual_curve():
     """Create a deterministic Treasury-like curve for repeatable examples."""
-    return get_rate_curve(
-        provider=ManualRateProvider(
+    return aq.get_rate_curve(
+        provider=aq.ManualRateProvider(
             {
                 1.0 / 12.0: 0.0520,
                 0.25: 0.0505,
@@ -45,7 +40,7 @@ def build_manual_curve():
 def price_option_with_curve_rate(curve):
     """Price a one-year option using the curve's interpolated one-year rate."""
     one_year_rate = curve.zero_rate(1.0)
-    model = BlackScholesMertonModel(
+    model = aq.BlackScholesMertonModel(
         spot_price=100.0,
         strike_price=105.0,
         maturity_years=1.0,
@@ -60,7 +55,7 @@ def maybe_fetch_live_fred_curve():
     """Fetch a live FRED curve only when the user has configured an API key."""
     if not os.getenv("FRED_API_KEY"):
         return None
-    return get_rate_curve(
+    return aq.get_rate_curve(
         provider="fred",
         date="latest",
         cache_mode="disk",

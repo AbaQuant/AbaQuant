@@ -2,23 +2,16 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.output import configure_example_visuals, print_mapping, reset_example_visuals
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.derivatives import OptionStrategy
-from abaquant.derivatives.models import BlackScholesMertonModel, CoxRossRubinsteinModel
-from abaquant.derivatives.models.sabr import SABRVolatilityModel
-from abaquant.visualization import VisualizationError
 
 
 def build_report_models() -> dict[str, object]:
     """Create the models used by the visual report."""
     return {
-        "black_scholes": BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.22),
-        "lattice": CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.22, number_of_steps=8),
-        "sabr": SABRVolatilityModel(100.0, 105.0, 1.0, 0.20, 0.7, -0.25, 0.45),
+        "black_scholes": aq.BlackScholesMertonModel(100.0, 105.0, 1.0, 0.05, 0.22),
+        "lattice": aq.CoxRossRubinsteinModel(100.0, 105.0, 1.0, 0.05, 0.22, number_of_steps=8),
+        "sabr": aq.SABRVolatilityModel(100.0, 105.0, 1.0, 0.20, 0.7, -0.25, 0.45),
     }
 
 
@@ -83,7 +76,7 @@ def create_report_figures(models: dict[str, object]) -> dict[str, str]:
             chart="tree", option_type="put", filename="09_put_lattice"
         ),
         "sabr_smile": models["sabr"].visualize(chart="volatility_smile", filename="10_sabr_smile"),
-        "strategy_payoff": OptionStrategy.bull_call_spread(
+        "strategy_payoff": aq.OptionStrategy.bull_call_spread(
             lower_strike=100.0,
             upper_strike=115.0,
             lower_premium=6.0,
@@ -102,7 +95,7 @@ def run() -> None:
         models = build_report_models()
         print_mapping("Option report values", price_report_models(models))
         print_mapping("Option report figures", create_report_figures(models))
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 

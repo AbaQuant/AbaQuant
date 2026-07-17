@@ -2,25 +2,20 @@
 
 from __future__ import annotations
 
+import abaquant as aq
 from _shared.deterministic_market_provider import DeterministicMarketDataProvider
 from _shared.output import (
     configure_example_visuals,
     print_mapping,
     reset_example_visuals,
 )
-from _shared.package_bootstrap import ensure_package_importable
-
-ensure_package_importable()
-
-from abaquant.marketdata import get_ticker, get_tickers
-from abaquant.visualization import VisualizationError
 
 
 def build_ticker_and_universe() -> tuple[object, object]:
     """Create one ticker and one universe without Yahoo or network access."""
     provider = DeterministicMarketDataProvider()
-    ticker = get_ticker("DEMO", provider=provider, financial_cache="memory")
-    universe = get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
+    ticker = aq.get_ticker("DEMO", provider=provider, financial_cache="memory")
+    universe = aq.get_tickers(["ALPHA", "BETA", "GAMMA"], provider=provider)
     return ticker, universe
 
 
@@ -129,7 +124,7 @@ def run() -> None:
         print_mapping(
             "Created market-data figures", create_marketdata_visualizations(ticker, universe)
         )
-    except VisualizationError as exc:
+    except aq.VisualizationError as exc:
         print(f"Visualization skipped: {exc}")
 
 
