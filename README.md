@@ -3,7 +3,7 @@
 [![Tests](https://github.com/AbaQuant/AbaQuant/actions/workflows/tests.yml/badge.svg)](https://github.com/AbaQuant/AbaQuant/actions/workflows/tests.yml)
 [![Documentation](https://github.com/AbaQuant/AbaQuant/actions/workflows/docs.yml/badge.svg)](https://abaquant.github.io/AbaQuant/)
 [![PyPI](https://img.shields.io/pypi/v/abaquant.svg)](https://pypi.org/project/abaquant/)
-[![Python](https://img.shields.io/pypi/pyversions/abaquant.svg)](https://pypi.org/project/abaquant/)
+[![Python](https://img.shields.io/pypi/pyversions/abaquant.svg)](https://pypi.org/project/abaquant/) 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 AbaQuant is an applied actuarial and quantitative-finance library for Python. Version **1.0.0rc1** stabilizes the public namespace around derivatives, financial mathematics, market data, credit analytics, portfolio construction, risk dashboards, visualization, reports, rate curves, and provenance-aware workflows.
