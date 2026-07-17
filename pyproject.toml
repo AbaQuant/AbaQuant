@@ -89,6 +89,7 @@ src = ["src", "tests", "examples", "scripts"]
 exclude = [
     "docs/_build",
     "docs_build",
+    "examples in notebooks",
     "notebooks",
 ]
 
