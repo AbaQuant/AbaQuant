@@ -40,8 +40,8 @@ body[data-theme="light"] {
     --color-sidebar-caption-text: var(--aba-blue-link);
     --color-sidebar-link-text: var(--aba-blue-text);
     --color-sidebar-link-text--top-level: var(--aba-blue-link);
-    --color-sidebar-item-background--hover: #d8e3f6;
-    --color-sidebar-item-background--current: #c7d7f0;
+    --color-sidebar-item-background--hover: #E4EBF7;
+    --color-sidebar-item-background--current: #eaeff8;
 
     /* Search bar */
     --color-sidebar-search-background: #f3f6ff;
@@ -328,4 +328,53 @@ body[data-theme="dark"] dt.sig .descname .pre {
 .sidebar-logo {
     max-height: 5.5rem;
     width: auto;
+}
+
+
+
+
+
+
+
+
+/* =========================================================
+   Code blocks: remove outer borders but keep left bar
+   ========================================================= */
+
+/* Standard Sphinx/Furo code blocks */
+body[data-theme="light"] .highlight,
+body[data-theme="light"] div.highlight,
+body[data-theme="light"] .literal-block-wrapper,
+body[data-theme="light"] .literal-block-wrapper div.highlight {
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-left: 0.25rem solid #aec2e6 !important;
+    box-shadow: none !important;
+}
+
+/* The inner <pre> should not draw its own box */
+body[data-theme="light"] .highlight pre,
+body[data-theme="light"] div.highlight pre {
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* MyST-NB / notebook input cells */
+body[data-theme="light"] .cell_input,
+body[data-theme="light"] .nbinput {
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-left: 0.25rem solid #aec2e6 !important;
+    box-shadow: none !important;
+}
+
+/* Inner notebook code area */
+body[data-theme="light"] .cell_input div.highlight,
+body[data-theme="light"] .cell_input pre,
+body[data-theme="light"] .nbinput div.highlight,
+body[data-theme="light"] .nbinput pre {
+    border: none !important;
+    box-shadow: none !important;
 }

@@ -138,12 +138,13 @@ html_title = "AbaQuant 1.0.0rc1 documentation"
 html_baseurl = "https://abaquant.github.io/AbaQuant/"
 html_show_sourcelink = False
 html_static_path = ["_static"]
-html_css_files = ["custom.css"]
+html_css_files = ["custom.css", "cm-font-preview.css"]
 html_theme_options = {
     "source_repository": "https://github.com/AbaQuant/AbaQuant/",
     "source_branch": "main",
     "source_directory": "docs/",
 }
 html_logo = "_static/abaquant-logo.svg"
+html_favicon = "_static/q_dark.png"
 
 nitpicky = False

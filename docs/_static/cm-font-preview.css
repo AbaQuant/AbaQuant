@@ -1,0 +1,161 @@
+/* Temporary Computer Modern typography preview. */
+
+@font-face {
+    font-family: "AbaQuant CM Serif";
+    src: url("cm-font/cmunrm.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Serif";
+    src: url("cm-font/cmunbx.otf") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Serif";
+    src: url("cm-font/cmunti.otf") format("opentype");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Serif";
+    src: url("cm-font/cmunbi.otf") format("opentype");
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Sans";
+    src: url("cm-font/cmunss.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Sans";
+    src: url("cm-font/cmunsx.otf") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Sans";
+    src: url("cm-font/cmunsi.otf") format("opentype");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Mono";
+    src: url("cm-font/cmuntt.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Mono";
+    src: url("cm-font/cmuntb.otf") format("opentype");
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "AbaQuant CM Mono";
+    src: url("cm-font/cmunit.otf") format("opentype");
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+}
+
+:root,
+body {
+    --font-stack: "AbaQuant CM Serif", "Times New Roman", serif;
+    --font-stack--headings: "AbaQuant CM Serif", "Times New Roman", serif;
+    --font-stack--monospace: "AbaQuant CM Mono", "Courier New", monospace;
+}
+
+html,
+body,
+.content,
+.article-container,
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.content p,
+.content li,
+.content dt,
+.content dd,
+.content table,
+.content th,
+.content td,
+.sidebar-drawer,
+.sidebar-sticky,
+.sidebar-tree,
+.sidebar-tree .reference,
+.sidebar-tree .caption,
+.sidebar-tree .caption-text,
+.sidebar-search-container,
+.sidebar-search,
+.mobile-header,
+.toc-drawer,
+.toc-title,
+.toc-tree,
+.toc-tree .reference,
+.admonition,
+.admonition-title,
+.related-pages,
+.bottom-of-page,
+button,
+input,
+select,
+textarea {
+    font-family: "AbaQuant CM Serif", "Times New Roman", serif !important;
+}
+
+.content h1,
+.content h2,
+.content h3,
+.content h4,
+.content h5,
+.content h6,
+.sidebar-tree .caption,
+.sidebar-tree .caption-text,
+.admonition-title,
+.content th {
+    font-weight: 700;
+}
+
+.content p,
+.content dd {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+}
+
+code,
+kbd,
+pre,
+samp,
+.sig,
+.sig-name,
+.sig-param,
+.highlight,
+.highlight * {
+    font-family: "AbaQuant CM Mono", "Courier New", monospace !important;
+}
