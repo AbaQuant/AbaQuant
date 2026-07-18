@@ -21,7 +21,7 @@ body[data-theme="light"] {
     --color-sidebar-search-foreground--focus: #4a63af;
     --color-sidebar-search-icon: #4a63af;
 
-        --custom-dark-blue-text: #284167;
+        --custom-dark-blue-text: #000246;
 
     /* Main Furo text variables */
     --color-foreground-primary: #18345d;
