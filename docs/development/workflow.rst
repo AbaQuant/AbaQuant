@@ -16,8 +16,8 @@ Core checks
    python -m pytest
    python scripts/check_documentation.py
    python -m sphinx -W --keep-going -b html docs docs/_build/html
-   PYTHONPATH=src python examples/run_all_deterministic_examples.py
-   PYTHONPATH=src python examples/run_all_visual_examples.py
+   python -m examples.run_all_deterministic_examples
+   python -m examples.run_all_visual_examples
    python -m build
    python -m twine check dist/*
 

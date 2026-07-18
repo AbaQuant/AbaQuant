@@ -69,6 +69,7 @@ docs = [
     "furo",
     "sphinx-copybutton",
     "sphinx-autobuild",
+    "myst-nb",
 ]
 
 [tool.setuptools.packages.find]
@@ -89,7 +90,7 @@ src = ["src", "tests", "examples", "scripts"]
 exclude = [
     "docs/_build",
     "docs_build",
-    "examples in notebooks",
+    "examples_notebooks",
     "notebooks",
 ]
 

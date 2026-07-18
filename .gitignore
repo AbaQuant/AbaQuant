@@ -16,7 +16,12 @@ examples/generated_figures/**
 !examples/generated_figures/**/*.svg
 examples/generated_reports/
 notebooks/generated_figures/
+examples_notebooks/**/.ipynb_checkpoints/
+examples_notebooks/**/generated_figures/
+examples_notebooks/**/generated_reports/
+examples_notebooks/**/.qa_example_cache/
 .qa_example_cache/
-notebooks/
 AGENTS.md
 FRED API KEY
+docs/notebooks/
+notebooks/

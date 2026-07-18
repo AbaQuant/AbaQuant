@@ -89,6 +89,12 @@ Core workflow
    operations/index
 
 .. toctree::
+   :maxdepth: 3
+   :caption: Examples
+
+   notebooks/index
+
+.. toctree::
    :maxdepth: 2
    :caption: Development
 

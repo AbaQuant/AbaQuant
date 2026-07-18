@@ -113,7 +113,7 @@ Useful SEC checks:
 
 ```powershell
 C:\Users\herie\.conda\envs\quact\python.exe -m pytest -q tests\test_sec_xbrl_provider.py -vv
-C:\Users\herie\.conda\envs\quact\python.exe examples\15_sec_xbrl_fundamentals.py
+C:\Users\herie\.conda\envs\quact\python.exe -m examples.market_data.15_sec_xbrl_fundamentals
 ```
 
 ## Examples And Notebooks
@@ -131,9 +131,9 @@ Notebooks should be clean for readers:
 Common example commands:
 
 ```powershell
-C:\Users\herie\.conda\envs\quact\python.exe examples\00_import_all_public_modules.py
-C:\Users\herie\.conda\envs\quact\python.exe examples\run_all_deterministic_examples.py
-C:\Users\herie\.conda\envs\quact\python.exe examples\run_all_visual_examples.py
+C:\Users\herie\.conda\envs\quact\python.exe -m examples.foundations.00_import_all_public_modules
+C:\Users\herie\.conda\envs\quact\python.exe -m examples.run_all_deterministic_examples
+C:\Users\herie\.conda\envs\quact\python.exe -m examples.run_all_visual_examples
 ```
 
 Generated outputs such as `examples/generated_figures/`,

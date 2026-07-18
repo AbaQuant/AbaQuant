@@ -1,12 +1,22 @@
 # Examples
 
-The examples are written as small tutorial modules rather than long one-block
-scripts. Each file follows the same pattern:
+The examples are executable tutorial modules grouped by the same analytical
+domains as `examples_notebooks/`. Each module builds inputs, computes results,
+creates visualizations where appropriate, and exposes a `run()` function.
 
-1. build deterministic inputs;
-2. compute one family of results;
-3. create visualizations when the domain exposes `visualize()`;
-4. print a compact summary from `run()`.
+```text
+examples/
+|-- foundations/
+|-- financial_math_and_rates/
+|-- derivatives/
+|-- credit/
+|-- portfolio_and_risk/
+|-- market_data/
+|-- visualization_and_reports/
+|-- _shared/
+|-- run_all_deterministic_examples.py
+`-- run_all_visual_examples.py
+```
 
 No deterministic example requires Yahoo, yfinance, or network access.
 
@@ -18,130 +28,64 @@ The examples consume the published package through its public facade:
 import abaquant as aq
 ```
 
-Install the package and the optional dependencies used by the complete example
-suite from PyPI:
+Install AbaQuant and the optional dependencies used by the complete suite:
 
 ```bash
 python -m pip install "abaquant[market,visual]"
 ```
 
-## Run everything deterministic
+## Run the suites
+
+Run commands from the repository root so Python can resolve the local
+`examples` package:
 
 ```bash
-python examples/run_all_deterministic_examples.py
-python examples/run_all_visual_examples.py
+python -m examples.run_all_deterministic_examples
+python -m examples.run_all_visual_examples
 ```
 
-## Run by topic
+## Run by domain
+
+Individual examples use the same module-style command:
 
 ```bash
-python examples/01_derivatives.py
-python examples/02_financial_math.py
-python examples/03_derivatives_advanced_models.py
-python examples/04_credit_risk.py
-python examples/05_portfolio_optimization.py
-python examples/06_marketdata_offline.py
-python examples/09_visualizations.py
-python examples/10_visualization_theme.py
-python examples/11_visualize_method_gallery.py
-python examples/12_option_model_visual_report.py
-python examples/13_portfolio_credit_visual_dashboard.py
-python examples/14_scenario_analysis.py
-python examples/15_sec_xbrl_fundamentals.py
-python examples/16_fred_rate_curve.py
-python examples/17_option_chain_analytics.py
-python examples/18_option_strategy_builder.py
-python examples/19_portfolio_backtesting.py
-python examples/20_risk_dashboard.py
-python examples/21_exportable_reports.py
-python examples/22_derivative_calibration.py
+python -m examples.foundations.08_root_facades
+python -m examples.financial_math_and_rates.02_financial_math
+python -m examples.derivatives.01_derivatives
+python -m examples.credit.04_credit_risk
+python -m examples.portfolio_and_risk.05_portfolio_optimization
+python -m examples.market_data.06_marketdata_offline
+python -m examples.visualization_and_reports.09_visualizations
 ```
 
-## Optional live Yahoo/yfinance example
+The optional live Yahoo/yfinance workflow may make network requests:
 
 ```bash
-python examples/07_marketdata_live_cached_financials.py
+python -m examples.market_data.07_marketdata_live_cached_financials
 ```
 
-This example may make a network request and requires the optional market-data
-provider dependency.
+## Generated artifacts
 
-## SEC EDGAR/XBRL fundamentals example
-
-```bash
-python examples/15_sec_xbrl_fundamentals.py
-python examples/16_fred_rate_curve.py
-python examples/17_option_chain_analytics.py
-python examples/18_option_strategy_builder.py
-python examples/19_portfolio_backtesting.py
-python examples/20_risk_dashboard.py
-python examples/21_exportable_reports.py
-python examples/22_derivative_calibration.py
-```
-
-The SEC example is deterministic and offline. It uses a fixture shaped like the
-official SEC Company Facts JSON to demonstrate the full provider path from
-Company Facts to canonical statement tables and credit proxy inputs. It also
-shows disk-cache reuse for both raw SEC Company Facts and normalized financial
-statement snapshots. For live SEC access, construct a ticker with
-`fundamentals_provider="sec"`, set a clear User-Agent through `sec_user_agent`
-or `ABAQUANT_SEC_USER_AGENT`, and use `financial_cache="disk"` with an explicit
-`cache_directory` when you want repeated Python sessions to reuse cached SEC
-fundamentals.
-
-## Visualization examples
-
-The examples save figures instead of calling `show()` automatically. This makes
-them suitable for scripts, notebooks, and CI-style smoke tests. Matplotlib
+Examples save figures instead of calling `show()` automatically. Matplotlib
 figures are committed as SVG files; dense surfaces and heatmaps are rasterized
 inside the SVG so labels and axes remain vector sharp without oversized files.
 
-Generated files are saved under:
-
 ```text
 examples/generated_figures/
+examples/generated_reports/
 ```
 
-Most visualization examples use Matplotlib by default. Run all visual examples with `python examples/run_all_visual_examples.py`. `10_visualization_theme.py`
-also demonstrates temporary Plotly themes and HTML export. The Plotly HTML
-artifact remains generated but is not committed. The option visual
-examples include intrinsic/extrinsic decomposition, standardized Greek curves,
-price, delta, gamma, vega, and extrinsic-value surfaces, option-chain IV smile/surface/term-structure/rich-cheap/open-interest charts, plus derivative,
-portfolio, credit scenario-analysis visual reports, and integrated risk-dashboard charts, and derivative calibration model-versus-market/residual diagnostics.
+Most visualization examples use Matplotlib. The visualization-theme module
+also demonstrates temporary Plotly themes and HTML export. Plotly HTML and
+generated reports remain ignored.
 
-## Package imports
+## Import policy
 
-The examples intentionally do not modify `sys.path` or import from `src`.
-Run them in an environment where AbaQuant is installed, whether from PyPI or as
-an editable development installation.
+The examples do not modify `sys.path` or import the library from `src`.
+`abaquant` must be installed from PyPI or as an editable development package.
+Only deterministic fixtures and presentation helpers are imported from
+`examples._shared`.
 
-## Scope warning
-
-All data are synthetic unless an example explicitly says it is live. The examples
-are educational demonstrations of APIs, not investment, trading, or credit-rating
-advice.
-
-## Documentation companions
-
-Release documentation is available under `docs/`. The examples remain the
-canonical executable tutorial layer; documentation pages summarize public
-namespaces, assumptions, and release notes.
-
-- `16_fred_rate_curve.py` — Builds a deterministic risk-free-rate curve, shows `zero_rate()` and `discount_factor()`, uses the one-year curve rate inside a Black--Scholes--Merton example, and documents the optional live FRED branch with disk caching.
-
-
-- `17_option_chain_analytics.py` — Demonstrates IV smiles, IV surfaces, skew, term structure, rich/cheap tables, and open-interest heatmaps from a deterministic listed option chain.
-
-- `18_option_strategy_builder.py` — Builds composable option strategies, prints payoff diagnostics, and saves strategy payoff/component visualizations.
-
-- `19_portfolio_backtesting.py` - Demonstrates deterministic portfolio backtesting with equal-weight, buy-and-hold, and inverse-volatility policies; benchmark comparison; rolling metrics; calendar return tables; drawdown events; contribution and trade summaries; transaction-cost and slippage modeling; and extended backtest visualizations.
-
-
-- `20_risk_dashboard.py` - Builds an integrated dashboard that combines portfolio backtesting, volatility risk contributions, drawdowns, asset correlation, and synthetic credit proxy scores.
-
-- `21_exportable_reports.py` - Exports option, portfolio, backtest, credit, and risk-dashboard reports as Markdown, HTML, and PDF files.
-
-
-- `22_derivative_calibration.py` - Calibrates BSM flat volatility, SABR smile parameters, and a compact Heston fit to deterministic option-chain observations, then saves calibration diagnostic charts.
-
-- `23_data_provenance.py` demonstrates the provider-neutral `.provenance` metadata layer across derivatives, rates, portfolios, credit, dashboards, and reports.
+All data are synthetic unless an example explicitly says it is live. These
+examples are educational demonstrations, not investment, trading, or credit
+rating advice.

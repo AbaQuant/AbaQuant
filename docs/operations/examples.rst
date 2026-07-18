@@ -1,137 +1,70 @@
 Examples
 ========
 
-The ``examples/`` directory is the executable tutorial layer. Most
-examples are deterministic and offline so they can be used as smoke
-tests and learning material.
+The ``examples/`` directory is the executable tutorial layer. Its seven domain
+packages mirror ``examples_notebooks/`` and the Examples menu in this
+documentation.
 
-Run all deterministic examples
-------------------------------
+Run the suites
+--------------
 
-.. code:: bash
-
-   PYTHONPATH=src python examples/run_all_deterministic_examples.py
-
-Run visualization examples
---------------------------
+Run commands from the repository root with AbaQuant installed:
 
 .. code:: bash
 
-   PYTHONPATH=src python examples/run_all_visual_examples.py
+   python -m examples.run_all_deterministic_examples
+   python -m examples.run_all_visual_examples
 
-Visualization examples save files under:
+Domain map
+----------
 
-.. code:: text
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
 
-   examples/generated_figures/
+   * - Package
+     - Coverage
+   * - ``examples.foundations``
+     - Public imports, root facades, and provenance.
+   * - ``examples.financial_math_and_rates``
+     - Time value, rates, annuities, bonds, corporate finance, and FRED curves.
+   * - ``examples.derivatives``
+     - Vanilla and advanced pricing, option-chain analytics, strategies, and calibration.
+   * - ``examples.credit``
+     - Credit proxies, transitions, CDS, CDO, copulas, and statement bridges.
+   * - ``examples.portfolio_and_risk``
+     - Optimization, scenario analysis, backtesting, and integrated dashboards.
+   * - ``examples.market_data``
+     - Offline and optional live ticker, financial-statement, SEC, and universe workflows.
+   * - ``examples.visualization_and_reports``
+     - Theme configuration, visualization galleries, and report export.
 
-Report examples save files under:
+Run one example
+---------------
 
-.. code:: text
+Individual files are Python modules. For example:
 
-   examples/generated_reports/
+.. code:: bash
 
-Example map
------------
+   python -m examples.derivatives.01_derivatives
+   python -m examples.market_data.06_marketdata_offline
+   python -m examples.portfolio_and_risk.19_portfolio_backtesting
 
-+-----------------------------------+-----------------------------------+
-| File                              | Topic                             |
-+===================================+===================================+
-| ``                                | Imports public modules and        |
-| 00_import_all_public_modules.py`` | catches namespace regressions.    |
-+-----------------------------------+-----------------------------------+
-| ``01_derivatives.py``             | Vanilla options, Greeks, trees,   |
-|                                   | forwards, strategies, and         |
-|                                   | exotics.                          |
-+-----------------------------------+-----------------------------------+
-| ``02_financial_math.py``          | Time value, rates, annuities,     |
-|                                   | bonds, DCF, loans, portfolio      |
-|                                   | math, VaR.                        |
-+-----------------------------------+-----------------------------------+
-| ``03                              | BSM, CRR, Bachelier, Heston,      |
-| _derivatives_advanced_models.py`` | Merton, NIG, SABR,                |
-|                                   | Variance-Gamma.                   |
-+-----------------------------------+-----------------------------------+
-| ``04_credit_risk.py``             | Credit proxy metrics, transition  |
-|                                   | matrices, CDS, CDO, copula, VaR.  |
-+-----------------------------------+-----------------------------------+
-| ``05_portfolio_optimization.py``  | Allocation families, frontier,    |
-|                                   | Monte Carlo portfolios, stress    |
-|                                   | tests.                            |
-+-----------------------------------+-----------------------------------+
-| ``06_marketdata_offline.py``      | Deterministic ticker and universe |
-|                                   | workflows.                        |
-+-----------------------------------+-----------------------------------+
-| ``07_marke                        | Optional live/cached market-data  |
-| tdata_live_cached_financials.py`` | workflow.                         |
-+-----------------------------------+-----------------------------------+
-| ``08_root_facades.py``            | Root namespace and facade         |
-|                                   | imports.                          |
-+-----------------------------------+-----------------------------------+
-| ``09_visualizations.py``          | General visualization smoke test. |
-+-----------------------------------+-----------------------------------+
-| ``10_visualization_theme.py``     | Matplotlib/Plotly theme           |
-|                                   | configuration.                    |
-+-----------------------------------+-----------------------------------+
-| `                                 | Object ``.visualize()`` gallery.  |
-| `11_visualize_method_gallery.py`` |                                   |
-+-----------------------------------+-----------------------------------+
-| ``1                               | Option model charts and reports.  |
-| 2_option_model_visual_report.py`` |                                   |
-+-----------------------------------+-----------------------------------+
-| ``13_portf                        | Portfolio-credit visual           |
-| olio_credit_visual_dashboard.py`` | dashboard.                        |
-+-----------------------------------+-----------------------------------+
-| ``14_scenario_analysis.py``       | Cross-domain scenario analysis.   |
-+-----------------------------------+-----------------------------------+
-| ``15_sec_xbrl_fundamentals.py``   | SEC-style facts to statements to  |
-|                                   | credit inputs.                    |
-+-----------------------------------+-----------------------------------+
-| ``16_fred_rate_curve.py``         | Manual and optional live FRED     |
-|                                   | rate curves.                      |
-+-----------------------------------+-----------------------------------+
-| ``17_option_chain_analytics.py``  | IV smile, IV surface, skew, term  |
-|                                   | structure, rich/cheap, open       |
-|                                   | interest.                         |
-+-----------------------------------+-----------------------------------+
-| ``18_option_strategy_builder.py`` | Composable option strategies and  |
-|                                   | payoff diagnostics.               |
-+-----------------------------------+-----------------------------------+
-| ``19_portfolio_backtesting.py``   | Rebalanced portfolio backtesting  |
-|                                   | and reporting.                    |
-+-----------------------------------+-----------------------------------+
-| ``20_risk_dashboard.py``          | Integrated portfolio and credit   |
-|                                   | risk dashboard.                   |
-+-----------------------------------+-----------------------------------+
-| ``21_exportable_reports.py``      | Markdown, HTML, and PDF report    |
-|                                   | export.                           |
-+-----------------------------------+-----------------------------------+
-| ``22_derivative_calibration.py``  | BSM, SABR, and Heston calibration |
-|                                   | diagnostics.                      |
-+-----------------------------------+-----------------------------------+
-| ``23_data_provenance.py``         | Provenance across rates,          |
-|                                   | derivatives, portfolios, credit,  |
-|                                   | dashboards, and reports.          |
-+-----------------------------------+-----------------------------------+
+The live Yahoo example is optional and may make network requests:
 
-Learning path
--------------
+.. code:: bash
 
-1. Run ``01_derivatives.py``, ``02_financial_math.py``, and
-   ``05_portfolio_optimization.py`` first.
-2. Run ``06_marketdata_offline.py`` to understand ticker and universe
-   facades without live data.
-3. Run ``17_option_chain_analytics.py``,
-   ``18_option_strategy_builder.py``, and
-   ``22_derivative_calibration.py`` for derivatives workflows.
-4. Run ``19_portfolio_backtesting.py`` and ``20_risk_dashboard.py`` for
-   portfolio-risk workflows.
-5. Run ``21_exportable_reports.py`` and ``23_data_provenance.py`` to
-   understand deliverables and audit metadata.
+   python -m examples.market_data.07_marketdata_live_cached_financials
+
+Artifacts
+---------
+
+Figures and reports are written under ``examples/generated_figures/`` and
+``examples/generated_reports/``. Examples return figures and do not call
+``show()`` automatically.
 
 Determinism policy
 ------------------
 
-Examples should prefer deterministic fixtures over live providers. If an
-example can make a network request, it should say so in the file and
-remain skippable or optional.
+Examples should prefer deterministic fixtures over live providers. Any example
+that can make a network request must say so and remain optional.

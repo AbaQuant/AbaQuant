@@ -6,17 +6,17 @@ import importlib.util
 from pathlib import Path
 
 VISUAL_SCRIPTS = (
-    "09_visualizations.py",
-    "10_visualization_theme.py",
-    "11_visualize_method_gallery.py",
-    "12_option_model_visual_report.py",
-    "13_portfolio_credit_visual_dashboard.py",
-    "14_scenario_analysis.py",
-    "17_option_chain_analytics.py",
-    "18_option_strategy_builder.py",
-    "19_portfolio_backtesting.py",
-    "20_risk_dashboard.py",
-    "22_derivative_calibration.py",
+    "visualization_and_reports/09_visualizations.py",
+    "visualization_and_reports/10_visualization_theme.py",
+    "visualization_and_reports/11_visualize_method_gallery.py",
+    "derivatives/12_option_model_visual_report.py",
+    "portfolio_and_risk/13_portfolio_credit_visual_dashboard.py",
+    "portfolio_and_risk/14_scenario_analysis.py",
+    "derivatives/17_option_chain_analytics.py",
+    "derivatives/18_option_strategy_builder.py",
+    "portfolio_and_risk/19_portfolio_backtesting.py",
+    "portfolio_and_risk/20_risk_dashboard.py",
+    "derivatives/22_derivative_calibration.py",
 )
 
 

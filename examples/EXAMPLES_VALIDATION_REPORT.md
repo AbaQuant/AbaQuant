@@ -20,8 +20,8 @@ modules with small functions and explicit `run()` entry points.
 ```bash
 python -m compileall -q examples
 python -m pytest
-python examples/run_all_deterministic_examples.py
-python examples/run_all_visual_examples.py
+python -m examples.run_all_deterministic_examples
+python -m examples.run_all_visual_examples
 ```
 
 ## Results
@@ -33,6 +33,6 @@ python examples/run_all_visual_examples.py
 
 ## Notes
 
-`07_marketdata_live_cached_financials.py` remains intentionally outside the
+`market_data/07_marketdata_live_cached_financials.py` remains intentionally outside the
 deterministic runner because it can require `yfinance`, network access, and a
 provider response from Yahoo Finance.
